@@ -693,6 +693,8 @@ win:
 	.comm	shadowOAM,1024,4
 	.comm	oldButtons,2,2
 	.comm	buttons,2,2
+	.comm	gem,32,4
+	.comm	gems,128,4
 	.comm	player,48,4
 	.comm	livesRemaining,4,4
 	.comm	gemsRemaining,4,4

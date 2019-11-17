@@ -1578,7 +1578,20 @@ typedef struct {
     int cvel;
 
 } PLAYER;
-# 28 "game.h"
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int screenRow;
+    int screenCol;
+    int width;
+    int height;
+    int active;
+    int OAMpos;
+
+} GEM;
+# 41 "game.h"
 int hOff;
 int vOff;
 
@@ -1588,17 +1601,22 @@ int livesRemaining;
 
 
 PLAYER player;
+GEM gems[4];
+GEM gem;
 
 
 
 
 void initGame();
+void initGems(GEM*, int);
 
 void updateGame();
 void updatePlayer();
+void updateGems(GEM*);
 
 void drawGame();
 void drawPlayer();
+void drawGem();
 # 7 "game.c" 2
 # 1 "collisionMap.h" 1
 # 20 "collisionMap.h"
@@ -1626,8 +1644,33 @@ void initGame() {
     player.rvel = 0;
 
 
+    gem.width = 8;
+    gem.height = 8;
+    gem.worldRow = 8;
+    gem.worldCol = 8;
+    gem.active = 1;
+    gem.OAMpos = 1;
+
+
+    for (int i = 0; i < 4; i++) {
+        initGems(&gems[i], i);
+    }
+
+
     vOff = 512 - 160;
     hOff = 0;
+
+}
+
+
+void initGems(GEM* g, int i) {
+
+    g->OAMpos = 2 + i;
+    g->width = 8;
+    g->height = 8;
+    g->worldCol = (10 * i) + 200;
+    g->worldRow = 512 - 16 - g->height;
+    g->active = 1;
 
 }
 
@@ -1636,6 +1679,12 @@ void updateGame() {
 
 
     updatePlayer();
+
+
+
+    for (int i = 0; i < (4); i++) {
+        updateGems(&gems[i]);
+    }
 
 }
 
@@ -1677,10 +1726,25 @@ void updatePlayer() {
 }
 
 
+void updateGems(GEM* g) {
+
+    g->screenCol = g->worldCol - hOff;
+    g->screenRow = g->worldRow - vOff;
+
+    shadowOAM[g->OAMpos].attr0 = (0xFF & g->screenRow) | (0<<14);
+    shadowOAM[g->OAMpos].attr1 = (0x1FF & g->screenCol) | (0<<14);
+    shadowOAM[g->OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
+
+}
+
+
 void drawGame() {
 
 
     drawPlayer();
+
+
+    drawGem();
 
     waitForVBlank();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128*4);
@@ -1697,5 +1761,14 @@ void drawPlayer() {
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
     shadowOAM[0].attr2 = ((0)*32+(player.aniState * 4)) | ((0)<<12) | ((0)<<10);
+
+}
+
+
+void drawGem() {
+
+    shadowOAM[gem.OAMpos].attr0 = (0xFF & gem.worldRow) | (0<<14);
+    shadowOAM[gem.OAMpos].attr1 = (0x1FF & gem.worldCol) | (0<<14);
+    shadowOAM[gem.OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
 
 }

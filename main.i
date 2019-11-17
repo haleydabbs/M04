@@ -96,7 +96,20 @@ typedef struct {
     int cvel;
 
 } PLAYER;
-# 28 "game.h"
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int screenRow;
+    int screenCol;
+    int width;
+    int height;
+    int active;
+    int OAMpos;
+
+} GEM;
+# 41 "game.h"
 int hOff;
 int vOff;
 
@@ -106,17 +119,22 @@ int livesRemaining;
 
 
 PLAYER player;
+GEM gems[4];
+GEM gem;
 
 
 
 
 void initGame();
+void initGems(GEM*, int);
 
 void updateGame();
 void updatePlayer();
+void updateGems(GEM*);
 
 void drawGame();
 void drawPlayer();
+void drawGem();
 # 4 "main.c" 2
 # 1 "startBG.h" 1
 # 22 "startBG.h"
