@@ -65,7 +65,6 @@ void updateGame() {
     // Update player sprite
     updatePlayer();
 
-    // Update gems
     // Update gems for player to collect on screen
     for (int i = 0; i < (GEMCOUNT); i++) {
         updateGems(&gems[i]);
@@ -82,7 +81,7 @@ void updatePlayer() {
 
     // Moving left logic
     if (BUTTON_HELD(BUTTON_LEFT)) {
-        if ( (player.worldCol > 0)
+        if ( (player.worldCol + 8 > 0)
         && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow, MAPWIDTH)])
         && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
             
@@ -98,7 +97,7 @@ void updatePlayer() {
 
     // Moving right logic
     if (BUTTON_HELD(BUTTON_RIGHT)) {
-        if (player.worldCol< SCREENWIDTH
+        if (player.worldCol + 8 < SCREENWIDTH
         && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow, MAPWIDTH)])
         && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
             
@@ -118,18 +117,30 @@ void updatePlayer() {
     if (player.rvel >= 0)
     {
 
-        // Attempting some complex vertical movement, still buggy
-        if ((vOff > 0) && (player.screenRow < 60)) {
+        // Attempting some complex vertical movement
+        if ((vOff > 0) && (player.screenRow + 16 < 60)) { 
             vOff -= player.rvel;
         }
+
+        if ((player.rvel == 0) && (player.screenRow + 16 < 80) && (vOff > 0)) {
+            vOff--;
+        }
         
-        if ((vOff < MAPHEIGHT - SCREENHEIGHT) && (player.screenRow > 100)) {
+        if ((vOff < MAPHEIGHT - SCREENHEIGHT) && (player.screenRow + 16 > 100)) {
             vOff += player.rvel;
+        }
+
+        if ((vOff < MAPHEIGHT - SCREENHEIGHT) && (player.screenRow + 16 > 80) && (player.rvel == 0)) {
+            vOff++;
         }
 
         // Reset vOff to max value if we go past it
         if (vOff > MAPHEIGHT - SCREENHEIGHT) {
              vOff = MAPHEIGHT - SCREENHEIGHT;
+        }
+        // Reset vOff to min value if we go past it
+        if (vOff < 0) {
+            vOff = 0;
         }
 
         // If you're standing on the ground check for jump input
@@ -150,8 +161,13 @@ void updatePlayer() {
             // which will increase their velocity instantly to the max
             if (BUTTON_PRESSED(BUTTON_UP)) {
 
+                // Stop player from jumping if at top of screen
+                if (player.worldRow > 0) {
+
                 // If jumping, immediately decrement to our maximum row velocity
                 player.rvel_FP = - (RVEL_MAX_FP);
+
+                }
 
             } else {
 

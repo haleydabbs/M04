@@ -1686,7 +1686,6 @@ void updateGame() {
     updatePlayer();
 
 
-
     for (int i = 0; i < (4); i++) {
         updateGems(&gems[i]);
     }
@@ -1700,8 +1699,9 @@ void updatePlayer() {
     player.worldRow = player.worldRow_FP / 1024;
     player.rvel = player.rvel_FP / 1024;
 
+
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
-        if ( (player.worldCol > 0)
+        if ( (player.worldCol + 8 > 0)
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + 8 - player.cvel))])
         && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + 8 - player.cvel))])) {
 
@@ -1714,8 +1714,10 @@ void updatePlayer() {
             }
         }
     }
+
+
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        if (player.worldCol< 240
+        if (player.worldCol + 8 < 240
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + player.width - 9 + player.cvel))])
         && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 9 + player.cvel))])) {
 
@@ -1730,32 +1732,48 @@ void updatePlayer() {
     }
 
 
+
+
     if (player.rvel >= 0)
     {
 
 
+        if ((vOff > 0) && (player.screenRow + 16 < 60)) {
+            vOff -= player.rvel;
+        }
 
+        if ((player.rvel == 0) && (player.screenRow + 16 < 80) && (vOff > 0)) {
+            vOff--;
+        }
 
-
-
-        if ((vOff < 512 - 160) && (player.screenRow > 100)) {
+        if ((vOff < 512 - 160) && (player.screenRow + 16 > 100)) {
             vOff += player.rvel;
         }
 
+        if ((vOff < 512 - 160) && (player.screenRow + 16 > 80) && (player.rvel == 0)) {
+            vOff++;
+        }
 
 
         if (vOff > 512 - 160) {
              vOff = 512 - 160;
         }
 
+        if (vOff < 0) {
+            vOff = 0;
+        }
+
 
         if (!(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + 8))])
         || !(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + player.width - 9))])) {
+
+
 
             while (!(collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + 8))])
             || !(collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 9))])) {
                 player.worldRow--;
             }
+
 
             player.worldRow_FP = player.worldRow * 1024;
 
@@ -1763,7 +1781,13 @@ void updatePlayer() {
 
             if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6))))) {
 
+
+                if (player.worldRow > 0) {
+
+
                 player.rvel_FP = - ((6 * 1024));
+
+                }
 
             } else {
 
@@ -1783,7 +1807,10 @@ void updatePlayer() {
     else {
 
 
+
         player.rvel_FP += 500;
+
+
 
     }
 
@@ -1792,10 +1819,7 @@ void updatePlayer() {
 
 
 
-    if ((vOff > 0) && (player.screenRow < 60)) {
 
-        vOff = 512 - 160 - (((512 - 32 - player.height) - player.worldRow));
-    }
 
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
