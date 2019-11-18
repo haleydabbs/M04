@@ -1610,8 +1610,6 @@ GEM gem;
 
 
 
-void alignMe(int);
-
 void initGame();
 void initGems(GEM*, int);
 
@@ -1704,8 +1702,8 @@ void updatePlayer() {
 
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
         if ( (player.worldCol > 0)
-        && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol - player.cvel))])
-        && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol - player.cvel))])) {
+        && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + 8 - player.cvel))])
+        && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + 8 - player.cvel))])) {
 
             player.worldCol -= player.cvel;
 
@@ -1718,8 +1716,8 @@ void updatePlayer() {
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
         if (player.worldCol< 240
-        && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + player.width - 1 + player.cvel))])
-        && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 1 + player.cvel))])) {
+        && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + player.width - 9 + player.cvel))])
+        && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 9 + player.cvel))])) {
 
             player.worldCol += player.cvel;
 
@@ -1735,11 +1733,27 @@ void updatePlayer() {
     if (player.rvel >= 0)
     {
 
-        if (!(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol))])
-        || !(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + player.width - 1))])) {
 
-            while (!(collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol))])
-            || !(collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 1))])) {
+
+
+
+
+        if ((vOff < 512 - 160) && (player.screenRow > 100)) {
+            vOff += player.rvel;
+        }
+
+
+
+        if (vOff > 512 - 160) {
+             vOff = 512 - 160;
+        }
+
+
+        if (!(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + 8))])
+        || !(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + player.width - 9))])) {
+
+            while (!(collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + 8))])
+            || !(collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 9))])) {
                 player.worldRow--;
             }
 
@@ -1777,13 +1791,14 @@ void updatePlayer() {
     player.worldRow_FP += player.rvel_FP;
 
 
+
+    if ((vOff > 0) && (player.screenRow < 60)) {
+
+        vOff = 512 - 160 - (((512 - 32 - player.height) - player.worldRow));
+    }
+
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
-
-}
-
-
-void alignMe(int i) {
 
 }
 

@@ -60,8 +60,6 @@ GEM gem;
 
 // Functions
 
-void alignMe(int);
-
 void initGame();
 void initGems(GEM*, int);
 

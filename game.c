@@ -76,14 +76,15 @@ void updateGame() {
 // Helper to update player
 void updatePlayer() {
 
-    // Convert worldrow_FP into int format
+    // Convert worldrow_FP into int format for use in collision detection
     player.worldRow = player.worldRow_FP / FP_SCALING_FACTOR;
     player.rvel = player.rvel_FP / FP_SCALING_FACTOR;
 
+    // Moving left logic
     if (BUTTON_HELD(BUTTON_LEFT)) {
         if ( (player.worldCol > 0)
-        && (collisionMapBitmap[OFFSET(player.worldCol - player.cvel, player.worldRow, MAPWIDTH)])
-        && (collisionMapBitmap[OFFSET(player.worldCol - player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
+        && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow, MAPWIDTH)])
+        && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
             
             player.worldCol -= player.cvel;
             
@@ -94,10 +95,12 @@ void updatePlayer() {
             }
         }
     }
+
+    // Moving right logic
     if (BUTTON_HELD(BUTTON_RIGHT)) {
         if (player.worldCol< SCREENWIDTH
-        && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 1 + player.cvel, player.worldRow, MAPWIDTH)])
-        && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 1 + player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
+        && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow, MAPWIDTH)])
+        && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
             
             player.worldCol += player.cvel;
 
@@ -109,24 +112,45 @@ void updatePlayer() {
         }
     }
 
+    // ----- GRAVITY LOGIC ----- Welcome to my nightmare
+
     // Check for collision with item on bottom to see if we need to accelerate downwards
     if (player.rvel >= 0)
     {
+
+        // Attempting some complex vertical movement, still buggy
+        if ((vOff > 0) && (player.screenRow < 60)) {
+            vOff -= player.rvel;
+        }
+        
+        if ((vOff < MAPHEIGHT - SCREENHEIGHT) && (player.screenRow > 100)) {
+            vOff += player.rvel;
+        }
+
+        // Reset vOff to max value if we go past it
+        if (vOff > MAPHEIGHT - SCREENHEIGHT) {
+             vOff = MAPHEIGHT - SCREENHEIGHT;
+        }
+
         // If you're standing on the ground check for jump input
-        if (!(collisionMapBitmap[OFFSET(player.worldCol, player.worldRow + player.height, MAPWIDTH)])
-        || !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height, MAPWIDTH)])) {
+        if (!(collisionMapBitmap[OFFSET(player.worldCol + 8, player.worldRow + player.height, MAPWIDTH)])
+        || !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 9, player.worldRow + player.height, MAPWIDTH)])) {
             
-            while (!(collisionMapBitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1, MAPWIDTH)])
-            || !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1, MAPWIDTH)])) {
+            // This is to align us with the ground pixel-perfect while falling
+            // decrementing by rvel isn't very exact and can land us inside of the collision map
+            while (!(collisionMapBitmap[OFFSET(player.worldCol + 8, player.worldRow + player.height - 1, MAPWIDTH)])
+            || !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 9, player.worldRow + player.height - 1, MAPWIDTH)])) {
                 player.worldRow--;
             }
 
+            // Convert current worldRow to Floating Point format for use
             player.worldRow_FP = player.worldRow * FP_SCALING_FACTOR;
 
             // If the player is standing on the ground, they can jump
             // which will increase their velocity instantly to the max
             if (BUTTON_PRESSED(BUTTON_UP)) {
 
+                // If jumping, immediately decrement to our maximum row velocity
                 player.rvel_FP = - (RVEL_MAX_FP);
 
             } else {
@@ -138,7 +162,7 @@ void updatePlayer() {
 
         } else {
 
-            // Else increment the rvel by the acceleration constant
+            // Else increment the rvel by the acceleration constant to simulate gravity
             player.rvel_FP += FP_GRAVITY_ACCEL;
 
         }
@@ -146,22 +170,23 @@ void updatePlayer() {
     }
     else {
 
-        // Otherwise we are traveling upwards and need to check the top
+        // Otherwise we are traveling downwards and need to increase our rvel by acceleration
+        // to simulate gravity
         player.rvel_FP += FP_GRAVITY_ACCEL;
+
+        // Put top collision boundary logic here if needed (a future maybe TODO)
 
     }
 
     // Gravity logic
     player.worldRow_FP += player.rvel_FP;
 
+    // This logic works if I don't want complex movement, and just want the camera to
+    // follow the exact location of the player
+    //vOff = MAPHEIGHT - SCREENHEIGHT - (((MAPHEIGHT - 32 - player.height) - player.worldRow));
 
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;    
-
-}
-
-// Helper to align player with floor using gravity
-void alignMe(int i) {
 
 }
 

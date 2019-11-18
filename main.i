@@ -128,8 +128,6 @@ GEM gem;
 
 
 
-void alignMe(int);
-
 void initGame();
 void initGems(GEM*, int);
 
