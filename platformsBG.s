@@ -25,7 +25,7 @@ platformsBGPal:
 	.short	31495
 	.short	19951
 	.short	3901
-	.short	32767
+	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -2012,6 +2012,10 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
+	.short	1
+	.short	1
+	.short	1
+	.short	1
 	.short	0
 	.short	0
 	.short	0
@@ -2040,14 +2044,10 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	1
+	.short	1
+	.short	1
+	.short	1
 	.short	0
 	.short	0
 	.short	0
@@ -2344,20 +2344,20 @@ platformsBGTiles:
 	.short	0
 	.short	0
 	.short	0
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
-	.short	30583
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
+	.short	4369
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

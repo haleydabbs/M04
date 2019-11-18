@@ -1736,18 +1736,20 @@ void updatePlayer() {
     {
 
         if (!(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol))])
-        && !(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + player.width - 1))])) {
+        || !(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + player.width - 1))])) {
 
-            while (!(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol))])
-            && !(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + player.width - 1))])) {
+            while (!(collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol))])
+            || !(collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 1))])) {
                 player.worldRow--;
             }
+
+            player.worldRow_FP = player.worldRow * 1024;
 
 
 
             if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6))))) {
 
-                player.rvel_FP = - ((4 * 1024));
+                player.rvel_FP = - ((6 * 1024));
 
             } else {
 

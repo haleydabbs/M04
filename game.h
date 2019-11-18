@@ -40,7 +40,7 @@ typedef struct {
 # define MAPHEIGHT 512
 # define FP_GRAVITY_ACCEL 500
 # define FP_SCALING_FACTOR 1024
-# define RVEL_MAX 4
+# define RVEL_MAX 6
 # define RVEL_MAX_FP (RVEL_MAX * 1024)
 
 // Offset

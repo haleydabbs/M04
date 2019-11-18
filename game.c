@@ -114,12 +114,14 @@ void updatePlayer() {
     {
         // If you're standing on the ground check for jump input
         if (!(collisionMapBitmap[OFFSET(player.worldCol, player.worldRow + player.height, MAPWIDTH)])
-        && !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height, MAPWIDTH)])) {
+        || !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height, MAPWIDTH)])) {
             
             while (!(collisionMapBitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1, MAPWIDTH)])
-            && !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1, MAPWIDTH)])) {
+            || !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1, MAPWIDTH)])) {
                 player.worldRow--;
             }
+
+            player.worldRow_FP = player.worldRow * FP_SCALING_FACTOR;
 
             // If the player is standing on the ground, they can jump
             // which will increase their velocity instantly to the max
