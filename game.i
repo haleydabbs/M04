@@ -1566,6 +1566,7 @@ typedef struct {
 
     int worldRow;
     int worldCol;
+    int worldRow_FP;
     int screenRow;
     int screenCol;
     int width;
@@ -1574,6 +1575,7 @@ typedef struct {
     int aniState;
     int prevAniState;
     int aniFrame;
+    int rvel_FP;
     int rvel;
     int cvel;
 
@@ -1591,7 +1593,7 @@ typedef struct {
     int OAMpos;
 
 } GEM;
-# 41 "game.h"
+# 47 "game.h"
 int hOff;
 int vOff;
 
@@ -1606,6 +1608,9 @@ GEM gem;
 
 
 
+
+
+void alignMe(int);
 
 void initGame();
 void initGems(GEM*, int);
@@ -1637,11 +1642,13 @@ void initGame() {
     player.width = 32;
     player.height = 32;
     player.worldRow = 512 - player.height - 16;
+    player.worldRow_FP = player.worldRow * 1024;
     player.worldCol = (240/2) - (player.width/2) + hOff;
     player.aniCounter = 0;
     player.aniState = 0;
     player.cvel = 2;
     player.rvel = 0;
+    player.rvel_FP = 0;
 
 
     gem.width = 8;
@@ -1691,6 +1698,10 @@ void updateGame() {
 
 void updatePlayer() {
 
+
+    player.worldRow = player.worldRow_FP / 1024;
+    player.rvel = player.rvel_FP / 1024;
+
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
         if ( (player.worldCol > 0)
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol - player.cvel))])
@@ -1720,8 +1731,57 @@ void updatePlayer() {
         }
     }
 
+
+    if (player.rvel >= 0)
+    {
+
+        if (!(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol))])
+        && !(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + player.width - 1))])) {
+
+            while (!(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol))])
+            && !(collisionMapBitmap[((player.worldRow + player.height)*(256)+(player.worldCol + player.width - 1))])) {
+                player.worldRow--;
+            }
+
+
+
+            if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6))))) {
+
+                player.rvel_FP = - ((4 * 1024));
+
+            } else {
+
+
+                player.rvel_FP = 0;
+
+            }
+
+        } else {
+
+
+            player.rvel_FP += 500;
+
+        }
+
+    }
+    else {
+
+
+        player.rvel_FP += 500;
+
+    }
+
+
+    player.worldRow_FP += player.rvel_FP;
+
+
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
+
+}
+
+
+void alignMe(int i) {
 
 }
 

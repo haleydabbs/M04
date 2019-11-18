@@ -695,7 +695,7 @@ win:
 	.comm	buttons,2,2
 	.comm	gem,32,4
 	.comm	gems,128,4
-	.comm	player,48,4
+	.comm	player,56,4
 	.comm	livesRemaining,4,4
 	.comm	gemsRemaining,4,4
 	.comm	vOff,4,4

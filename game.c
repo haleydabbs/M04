@@ -20,11 +20,13 @@ void initGame() {
     player.width = 32;
     player.height = 32;
     player.worldRow = MAPHEIGHT - player.height - 16;
+    player.worldRow_FP = player.worldRow * FP_SCALING_FACTOR;
     player.worldCol = (SCREENWIDTH/2) - (player.width/2) + hOff;
     player.aniCounter = 0;
     player.aniState = 0;
     player.cvel = 2;
     player.rvel = 0;
+    player.rvel_FP = 0;
 
     // Init counter gem sprite
     gem.width = 8;
@@ -74,6 +76,10 @@ void updateGame() {
 // Helper to update player
 void updatePlayer() {
 
+    // Convert worldrow_FP into int format
+    player.worldRow = player.worldRow_FP / FP_SCALING_FACTOR;
+    player.rvel = player.rvel_FP / FP_SCALING_FACTOR;
+
     if (BUTTON_HELD(BUTTON_LEFT)) {
         if ( (player.worldCol > 0)
         && (collisionMapBitmap[OFFSET(player.worldCol - player.cvel, player.worldRow, MAPWIDTH)])
@@ -103,8 +109,57 @@ void updatePlayer() {
         }
     }
 
+    // Check for collision with item on bottom to see if we need to accelerate downwards
+    if (player.rvel >= 0)
+    {
+        // If you're standing on the ground check for jump input
+        if (!(collisionMapBitmap[OFFSET(player.worldCol, player.worldRow + player.height, MAPWIDTH)])
+        && !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height, MAPWIDTH)])) {
+            
+            while (!(collisionMapBitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1, MAPWIDTH)])
+            && !(collisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1, MAPWIDTH)])) {
+                player.worldRow--;
+            }
+
+            // If the player is standing on the ground, they can jump
+            // which will increase their velocity instantly to the max
+            if (BUTTON_PRESSED(BUTTON_UP)) {
+
+                player.rvel_FP = - (RVEL_MAX_FP);
+
+            } else {
+
+                // Otherwise if the player isn't jumping, put their rvel back to 0
+                player.rvel_FP = 0;
+
+            }
+
+        } else {
+
+            // Else increment the rvel by the acceleration constant
+            player.rvel_FP += FP_GRAVITY_ACCEL;
+
+        }
+
+    }
+    else {
+
+        // Otherwise we are traveling upwards and need to check the top
+        player.rvel_FP += FP_GRAVITY_ACCEL;
+
+    }
+
+    // Gravity logic
+    player.worldRow_FP += player.rvel_FP;
+
+
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;    
+
+}
+
+// Helper to align player with floor using gravity
+void alignMe(int i) {
 
 }
 

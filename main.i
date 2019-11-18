@@ -84,6 +84,7 @@ typedef struct {
 
     int worldRow;
     int worldCol;
+    int worldRow_FP;
     int screenRow;
     int screenCol;
     int width;
@@ -92,6 +93,7 @@ typedef struct {
     int aniState;
     int prevAniState;
     int aniFrame;
+    int rvel_FP;
     int rvel;
     int cvel;
 
@@ -109,7 +111,7 @@ typedef struct {
     int OAMpos;
 
 } GEM;
-# 41 "game.h"
+# 47 "game.h"
 int hOff;
 int vOff;
 
@@ -124,6 +126,9 @@ GEM gem;
 
 
 
+
+
+void alignMe(int);
 
 void initGame();
 void initGems(GEM*, int);

@@ -3,6 +3,7 @@ typedef struct {
 
     int worldRow;
     int worldCol;
+    int worldRow_FP;
     int screenRow;
     int screenCol;
     int width;
@@ -11,6 +12,7 @@ typedef struct {
     int aniState;
     int prevAniState;
     int aniFrame;
+    int rvel_FP;
     int rvel;
     int cvel;
 
@@ -36,6 +38,10 @@ typedef struct {
 # define LIFECOUNT 3
 # define MAPWIDTH 256
 # define MAPHEIGHT 512
+# define FP_GRAVITY_ACCEL 500
+# define FP_SCALING_FACTOR 1024
+# define RVEL_MAX 4
+# define RVEL_MAX_FP (RVEL_MAX * 1024)
 
 // Offset
 int hOff;
@@ -53,6 +59,9 @@ GEM gem;
 // Player state enum
 
 // Functions
+
+void alignMe(int);
+
 void initGame();
 void initGems(GEM*, int);
 
