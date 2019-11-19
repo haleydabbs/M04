@@ -331,35 +331,34 @@ initGame:
 	mov	lr, pc
 	bx	r3
 	ldr	r3, .L53+32
-	str	r4, [r3, #92]
-	mov	r4, #176
 	str	r5, [r3, #124]
 	mov	r5, #128
 	mov	r8, #56
-	mov	r10, #104
-	str	r4, [r3, #32]
+	mov	r9, #104
+	str	r4, [r3, #92]
 	ldr	r4, .L53+36
 	str	r5, [r3, #68]
 	ldr	r5, [r4]
 	str	r8, [r3, #64]
 	ldr	r8, .L53+40
-	add	r5, r5, r10
+	add	r5, r5, r9
 	str	r5, [r8, #4]
+	mov	r5, #464
+	str	r5, [r8]
 	mov	r5, #475136
 	mov	r2, #8
 	mov	r1, #1
 	mov	r0, #32
 	mov	ip, #0
-	mov	r7, #464
 	mov	r6, #2
-	mov	r9, #16
+	mov	r7, #16
 	str	r5, [r8, #8]
 	mov	fp, #240
+	mov	r10, #176
 	mov	r5, #256
 	str	fp, [r3, #36]
+	str	r10, [r3, #32]
 	str	r6, [r3, #60]
-	str	r0, [r8, #20]
-	str	r0, [r8, #24]
 	str	r1, [r3, #28]
 	str	r1, [r3, #24]
 	str	r1, [r3, #56]
@@ -372,15 +371,16 @@ initGame:
 	str	r2, [r3, #84]
 	str	r2, [r3, #112]
 	str	r2, [r3, #116]
-	str	r10, [r3, #4]
-	str	r10, [r3]
-	str	r7, [r8]
+	str	r9, [r3, #4]
+	str	r9, [r3]
+	str	r0, [r8, #20]
+	str	r0, [r8, #24]
 	str	ip, [r8, #28]
 	str	ip, [r8, #32]
 	str	ip, [r8, #48]
 	str	ip, [r8, #44]
 	str	r6, [r8, #52]
-	str	r9, [r3, #100]
+	str	r7, [r3, #100]
 	str	r5, [r3, #96]
 	mov	r5, #5
 	str	r1, [r3, #120]
@@ -394,7 +394,7 @@ initGame:
 	str	r5, [r3, #56]
 	mov	r5, #7
 	mov	lr, #144
-	str	r9, [r3, #4]
+	str	r7, [r3, #4]
 	str	r0, [r3, #16]
 	str	r0, [r3, #20]
 	str	r0, [r3]
@@ -402,11 +402,11 @@ initGame:
 	str	r1, [r3, #44]
 	str	r1, [r3, #48]
 	str	r1, [r3, #80]
-	str	r0, [r3, #72]
-	str	r0, [r3, #76]
 	str	r1, [r3, #100]
 	str	r1, [r3, #104]
 	str	ip, [r3, #52]
+	str	r0, [r3, #72]
+	str	r0, [r3, #76]
 	str	ip, [r3, #108]
 	ldr	r3, .L53+48
 	str	r5, [r3, #28]
@@ -429,36 +429,37 @@ initGame:
 	str	r2, [r3, #36]
 	str	r2, [r3, #56]
 	str	r2, [r3, #60]
-	ldr	r2, .L53+60
-	str	r0, [r2]
-	str	r0, [r2, #4]
-	mov	r0, #9
-	str	r0, [r3, #16]
-	mov	r0, #208
-	str	r0, [r3, #28]
-	mov	r0, #10
-	str	r0, [r3, #40]
-	mov	r0, #192
+	mov	r2, #224
+	str	r2, [r3, #4]
+	mov	r2, #9
+	str	r2, [r3, #16]
+	mov	r2, #208
+	str	r2, [r3, #28]
+	mov	r2, #10
+	str	r2, [r3, #40]
+	mov	r2, #192
 	str	ip, [r4]
-	str	r0, [r3, #52]
-	mov	r4, #224
-	mov	r0, #11
+	str	r2, [r3, #52]
+	mov	r4, #11
+	ldr	r2, .L53+60
 	str	r1, [r3, #44]
 	str	r1, [r3, #68]
+	str	r1, [r2, #12]
+	mov	r1, #12
+	str	r4, [r3, #64]
+	ldr	r4, .L53+64
+	str	lr, [r2, #16]
+	str	r0, [r2]
+	str	r0, [r2, #4]
+	str	ip, [r2, #40]
+	str	r4, [r2, #24]
+	str	r1, [r2, #8]
+	mov	r2, #352
 	str	lr, [r3]
 	str	lr, [r3, #24]
 	str	lr, [r3, #48]
-	str	r4, [r3, #4]
-	str	r0, [r3, #64]
-	mov	r3, #12
-	str	r3, [r2, #8]
-	mov	r3, #352
-	str	r1, [r2, #12]
-	ldr	r1, .L53+64
-	str	r7, [r2, #24]
-	str	lr, [r2, #16]
-	str	ip, [r2, #40]
-	str	r3, [r1]
+	ldr	r3, .L53+68
+	str	r2, [r3]
 	pop	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	bx	lr
 .L54:
@@ -480,6 +481,7 @@ initGame:
 	.word	gemNum
 	.word	hearts
 	.word	statue
+	.word	442
 	.word	vOff
 	.size	initGame, .-initGame
 	.align	2
@@ -863,10 +865,21 @@ updateGame:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, lr}
-	bl	updatePlayer
 	mov	r7, #512
-	ldr	r4, .L162
-	ldr	r5, .L162+4
+	bl	updatePlayer
+	ldr	r3, .L162
+	ldr	r0, .L162+4
+	ldr	r2, .L162+8
+	ldr	ip, [r0]
+	ldr	r1, [r3, #24]
+	ldr	r0, [r2]
+	ldr	r2, [r3, #16]
+	ldr	r4, .L162+12
+	sub	r1, r1, ip
+	sub	r2, r2, r0
+	str	r1, [r3, #28]
+	str	r2, [r3, #20]
+	ldr	r5, .L162+16
 	add	r6, r4, #128
 .L151:
 	ldr	r3, [r4, #24]
@@ -878,7 +891,7 @@ updateGame:
 	add	r4, r4, #32
 	cmp	r4, r6
 	bne	.L151
-	ldr	r4, .L162+8
+	ldr	r4, .L162+20
 	ldr	r3, [r4, #24]
 	cmp	r3, #0
 	bne	.L152
@@ -896,9 +909,9 @@ updateGame:
 	strh	r2, [r5, r3]	@ movhi
 .L156:
 	mov	r7, #512
-	ldr	r3, .L162+12
-	ldr	r6, .L162+16
-	ldr	r4, .L162+20
+	ldr	r3, .L162+24
+	ldr	r6, .L162+28
+	ldr	r4, .L162+32
 	add	ip, r3, #72
 .L155:
 	ldr	r2, [r3, #20]
@@ -925,7 +938,7 @@ updateGame:
 	strh	r7, [r5, r3]	@ movhi
 	b	.L150
 .L154:
-	ldr	r0, .L162+24
+	ldr	r0, .L162+36
 	bl	updateWolves.part.0
 	b	.L156
 .L152:
@@ -935,6 +948,9 @@ updateGame:
 .L163:
 	.align	2
 .L162:
+	.word	statue
+	.word	vOff
+	.word	hOff
 	.word	gems
 	.word	shadowOAM
 	.word	wolves
@@ -944,12 +960,12 @@ updateGame:
 	.word	wolves+56
 	.size	updateGame, .-updateGame
 	.align	2
-	.global	updateState
+	.global	updateStatue
 	.syntax unified
 	.arm
 	.fpu softvfp
-	.type	updateState, %function
-updateState:
+	.type	updateStatue, %function
+updateStatue:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
@@ -972,7 +988,7 @@ updateState:
 	.word	statue
 	.word	vOff
 	.word	hOff
-	.size	updateState, .-updateState
+	.size	updateStatue, .-updateStatue
 	.align	2
 	.global	updateGems
 	.syntax unified

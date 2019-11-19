@@ -954,12 +954,12 @@ FinalGameSpritesTiles:
 	.short	4626
 	.short	6161
 	.short	-32478
-	.short	-31615
+	.short	-32639
 	.short	2065
-	.short	18449
+	.short	2065
 	.short	136
 	.short	-32478
-	.short	2120
+	.short	2056
 	.short	4642
 	.short	-32383
 	.short	8737
@@ -971,10 +971,10 @@ FinalGameSpritesTiles:
 	.short	8728
 	.short	4481
 	.short	4480
-	.short	6216
+	.short	6152
 	.short	-30720
-	.short	4484
-	.short	-31616
+	.short	4480
+	.short	-32640
 	.short	8728
 	.short	6168
 	.short	8737
@@ -991,7 +991,7 @@ FinalGameSpritesTiles:
 	.short	4114
 	.short	4642
 	.short	8466
-	.short	273
+	.short	-32495
 	.short	8738
 	.short	2177
 	.short	4369

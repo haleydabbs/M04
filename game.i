@@ -1691,7 +1691,7 @@ void updatePlayer();
 void updateGems(GEM*);
 void updateWolves(WOLF*);
 void updateHearts(HEART*);
-void updateState();
+void updateStatue();
 
 void drawGame();
 void drawPlayer();
@@ -1763,7 +1763,7 @@ void initGame() {
     statue.width = 32;
     statue.height = 32;
     statue.worldCol = 256/2 + statue.width/2;
-    statue.worldRow = 512 - 16 - statue.height;
+    statue.worldRow = 512 - 38 - statue.height;
     statue.active = 1;
     statue.OAMpos = 12;
     statue.aniState = 0;
@@ -1852,6 +1852,7 @@ void updateGame() {
     updatePlayer();
 
 
+    updateStatue();
 
 
     for (int i = 0; i < 4; i++) {
@@ -2002,7 +2003,7 @@ void updatePlayer() {
 }
 
 
-void updateState() {
+void updateStatue() {
 
     statue.screenRow = statue.worldRow - vOff;
     statue.screenCol = statue.worldCol - hOff;

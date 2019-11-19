@@ -143,7 +143,7 @@ void updatePlayer();
 void updateGems(GEM*);
 void updateWolves(WOLF*);
 void updateHearts(HEART*);
-void updateState();
+void updateStatue();
 
 void drawGame();
 void drawPlayer();

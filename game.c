@@ -65,7 +65,7 @@ void initGame() {
     statue.width = 32;
     statue.height = 32;
     statue.worldCol = MAPWIDTH/2 + statue.width/2;
-    statue.worldRow = MAPHEIGHT - 16 - statue.height;
+    statue.worldRow = MAPHEIGHT - 38 - statue.height;
     statue.active = 1;
     statue.OAMpos = 12;
     statue.aniState = 0;
@@ -154,6 +154,7 @@ void updateGame() {
     updatePlayer();
 
     // Update statue sprite
+    updateStatue();
 
     // Update gems for player to collect on screen
     for (int i = 0; i < GEMCOUNT; i++) {
@@ -304,7 +305,7 @@ void updatePlayer() {
 }
 
 // Helper to update the statue sprite
-void updateState() {
+void updateStatue() {
 
     statue.screenRow = statue.worldRow - vOff;
     statue.screenCol = statue.worldCol - hOff;
@@ -532,7 +533,7 @@ void drawStatue() {
     shadowOAM[statue.OAMpos].attr0 = (ROWMASK & statue.screenRow) | ATTR0_SQUARE;
     shadowOAM[statue.OAMpos].attr1 = (COLMASK & statue.screenCol) | ATTR1_MEDIUM;
     shadowOAM[statue.OAMpos].attr2 = ATTR2_TILEID(9, statue.aniState) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
-    
+
     }
 
 }
