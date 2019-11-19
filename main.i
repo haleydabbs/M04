@@ -137,9 +137,31 @@ typedef struct {
     int aniFrame;
     int cvel;
     int direction;
+    int colliding;
 
 } WOLF;
-# 77 "game.h"
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+
+} GEMNUM;
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+
+} HEART;
+# 99 "game.h"
 int hOff;
 int vOff;
 
@@ -150,8 +172,11 @@ int livesRemaining;
 
 PLAYER player;
 GEM gems[4];
+GEM gemCounterIcon;
 GAMEBAR blocks[8];
 WOLF wolves[2];
+GEMNUM gemNum;
+HEART hearts[3];
 
 
 
@@ -160,14 +185,18 @@ WOLF wolves[2];
 void initGame();
 void initGems(GEM*, int);
 void initWolves(WOLF*, int);
+void initHearts(HEART*, int);
 
 void updateGame();
 void updatePlayer();
 void updateGems(GEM*);
 void updateWolves(WOLF*);
+void updateHearts(HEART*);
 
 void drawGame();
 void drawPlayer();
+void drawGemCounterIcon();
+void drawGemNum();
 # 4 "main.c" 2
 # 1 "startBG.h" 1
 # 22 "startBG.h"
@@ -435,7 +464,7 @@ void game() {
         (*(unsigned short *)0x4000000) &= ~((1<<9));
         goToWin();
 
-    } else if ((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
+    } else if (livesRemaining == 0) {
 
 
         (*(unsigned short *)0x4000000) &= ~((1<<9));

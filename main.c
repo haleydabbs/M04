@@ -204,7 +204,7 @@ void game() {
         REG_DISPCTL &= ~(BG1_ENABLE);
         goToWin();
 
-    } else if (BUTTON_PRESSED(BUTTON_B)) {
+    } else if (livesRemaining == 0) {
 
         // Clear BG1_Enable bit
         REG_DISPCTL &= ~(BG1_ENABLE);

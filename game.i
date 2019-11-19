@@ -1619,9 +1619,31 @@ typedef struct {
     int aniFrame;
     int cvel;
     int direction;
+    int colliding;
 
 } WOLF;
-# 77 "game.h"
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+
+} GEMNUM;
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+
+} HEART;
+# 99 "game.h"
 int hOff;
 int vOff;
 
@@ -1632,8 +1654,11 @@ int livesRemaining;
 
 PLAYER player;
 GEM gems[4];
+GEM gemCounterIcon;
 GAMEBAR blocks[8];
 WOLF wolves[2];
+GEMNUM gemNum;
+HEART hearts[3];
 
 
 
@@ -1642,14 +1667,18 @@ WOLF wolves[2];
 void initGame();
 void initGems(GEM*, int);
 void initWolves(WOLF*, int);
+void initHearts(HEART*, int);
 
 void updateGame();
 void updatePlayer();
 void updateGems(GEM*);
 void updateWolves(WOLF*);
+void updateHearts(HEART*);
 
 void drawGame();
 void drawPlayer();
+void drawGemCounterIcon();
+void drawGemNum();
 # 7 "game.c" 2
 # 1 "collisionMap.h" 1
 # 20 "collisionMap.h"
@@ -1662,6 +1691,10 @@ void initGame() {
 
     DMANow(3, FinalGameSpritesTiles, &((charblock *)0x6000000)[4], 32768/2);
     DMANow(3, FinalGameSpritesPal, ((unsigned short *)0x5000200), 512/2);
+
+
+    gemsRemaining = 4;
+    livesRemaining = 3;
 
 
     hideSprites();
@@ -1686,6 +1719,25 @@ void initGame() {
 
     for (int i = 0; i < 2; i++) {
         initWolves(&wolves[i], i);
+    }
+
+
+    gemCounterIcon.width = 8;
+    gemCounterIcon.height = 8;
+    gemCounterIcon.worldCol = 8;
+    gemCounterIcon.worldRow = 160 - 16;
+    gemCounterIcon.OAMpos = 7;
+
+
+    gemNum.width = 8;
+    gemNum.height = 8;
+    gemNum.worldCol = 18;
+    gemNum.worldRow = 160 - 16;
+    gemNum.OAMpos = 8;
+
+
+    for (int i = 0; i < 3; i++) {
+        initHearts(&hearts[i], i);
     }
 
 
@@ -1737,6 +1789,7 @@ void initWolves(WOLF* w, int i) {
     w->height = 32;
     w->cvel = 1;
     w->direction = 1;
+    w->colliding = 0;
 
     if (i == 0) {
 
@@ -1749,6 +1802,18 @@ void initWolves(WOLF* w, int i) {
         w->worldRow = 152;
 
     }
+
+}
+
+
+void initHearts(HEART* h, int i) {
+
+    h->active = 1;
+    h->width = 8;
+    h->height = 8;
+    h->worldRow = 160 - 16;
+    h->worldCol = 224 - (16 * i);
+    h->OAMpos = 9 + i;
 
 }
 
@@ -1766,6 +1831,11 @@ void updateGame() {
 
     for (int i = 0; i < 2; i++) {
         updateWolves(&wolves[i]);
+    }
+
+
+    for (int i = 0; i < 3; i++) {
+        updateHearts(&hearts[i]);
     }
 
 }
@@ -2007,12 +2077,24 @@ void updateWolves(WOLF* w) {
             if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, w->screenCol, w->screenRow + w->height/2, w->width, w->height)) {
 
 
+                if (!w->colliding) {
+
+                    if ((3 -livesRemaining >= 0) && (3 - livesRemaining < 3)) {
+                        hearts[3 - livesRemaining].active = 0;
+                    }
 
 
+                    livesRemaining--;
+                }
 
-                livesRemaining--;
+                w->colliding = 1;
+
+            } else {
+
+                w->colliding = 0;
 
             }
+
 
             shadowOAM[w->OAMpos].attr0 = (0xFF & w->screenRow) | (0<<14);
             shadowOAM[w->OAMpos].attr1 = (0x1FF & w->screenCol) | (2<<14);
@@ -2030,10 +2112,33 @@ void updateWolves(WOLF* w) {
 }
 
 
+void updateHearts(HEART* h) {
+
+    if (h->active) {
+
+        shadowOAM[h->OAMpos].attr0 = (0xFF & h->worldRow) | (0<<14);
+        shadowOAM[h->OAMpos].attr1 = (0x1FF & h->worldCol) | (0<<14);
+        shadowOAM[h->OAMpos].attr2 = ((1)*32+(8)) | ((1)<<12) | ((0)<<10);
+
+    } else {
+
+        shadowOAM[h->OAMpos].attr0 = (2<<8);
+
+    }
+
+}
+
+
 void drawGame() {
 
 
     drawPlayer();
+
+
+    drawGemCounterIcon();
+
+
+    drawGemNum();
 
     waitForVBlank();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128*4);
@@ -2050,5 +2155,23 @@ void drawPlayer() {
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
     shadowOAM[0].attr2 = ((0)*32+(player.aniState * 4)) | ((0)<<12) | ((0)<<10);
+
+}
+
+
+void drawGemCounterIcon() {
+
+    shadowOAM[gemCounterIcon.OAMpos].attr0 = (0xFF & gemCounterIcon.worldRow) | (0<<14);
+    shadowOAM[gemCounterIcon.OAMpos].attr1 = (0x1FF & gemCounterIcon.worldCol) | (0<<14);
+    shadowOAM[gemCounterIcon.OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
+
+}
+
+
+void drawGemNum() {
+
+    shadowOAM[gemNum.OAMpos].attr0 = (0xFF & gemNum.worldRow) | (0<<14);
+    shadowOAM[gemNum.OAMpos].attr1 = (0x1FF & gemNum.worldCol) | (0<<14);
+    shadowOAM[gemNum.OAMpos].attr2 = ((2 + gemsRemaining)*32+(8)) | ((0)<<12) | ((0)<<10);
 
 }

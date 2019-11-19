@@ -56,8 +56,30 @@ typedef struct {
     int aniFrame;
     int cvel;
     int direction;
+    int colliding;
 
 } WOLF;
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+
+} GEMNUM;
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+
+} HEART;
 
 // Variables
 
@@ -84,8 +106,11 @@ int livesRemaining;
 // Struct inits
 PLAYER player;
 GEM gems[GEMCOUNT];
+GEM gemCounterIcon;
 GAMEBAR blocks[GAMEBAR_BLOCK_COUNT];
 WOLF wolves[WOLF_COUNT];
+GEMNUM gemNum;
+HEART hearts[LIFECOUNT];
 
 // Player state enum
 
@@ -94,11 +119,15 @@ WOLF wolves[WOLF_COUNT];
 void initGame();
 void initGems(GEM*, int);
 void initWolves(WOLF*, int);
+void initHearts(HEART*, int);
 
 void updateGame();
 void updatePlayer();
 void updateGems(GEM*);
 void updateWolves(WOLF*);
+void updateHearts(HEART*);
 
 void drawGame();
 void drawPlayer();
+void drawGemCounterIcon();
+void drawGemNum();

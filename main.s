@@ -494,65 +494,63 @@ game:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	ldr	r3, .L85
+	ldr	r3, .L82
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L85+4
+	ldr	r3, .L82+4
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L85+8
+	ldr	r3, .L82+8
 	ldrh	r3, [r3]
 	tst	r3, #8
 	beq	.L69
-	ldr	r2, .L85+12
+	ldr	r2, .L82+12
 	ldrh	r2, [r2]
 	tst	r2, #8
-	beq	.L82
+	beq	.L79
 .L69:
 	tst	r3, #1
 	beq	.L70
-	ldr	r2, .L85+12
-	ldrh	r2, [r2]
-	tst	r2, #1
-	beq	.L83
-.L70:
-	tst	r3, #2
-	beq	.L68
-	ldr	r3, .L85+12
+	ldr	r3, .L82+12
 	ldrh	r3, [r3]
-	tst	r3, #2
-	beq	.L84
-.L68:
+	tst	r3, #1
+	beq	.L80
+.L70:
+	ldr	r3, .L82+16
+	ldr	r3, [r3]
+	cmp	r3, #0
+	beq	.L81
 	pop	{r4, lr}
 	bx	lr
-.L82:
-	mov	r2, #67108864
-	ldrh	r3, [r2]
-	bic	r3, r3, #512
-	strh	r3, [r2]	@ movhi
-	pop	{r4, lr}
-	b	goToPause
-.L83:
-	mov	r2, #67108864
-	ldrh	r3, [r2]
-	bic	r3, r3, #512
-	strh	r3, [r2]	@ movhi
-	pop	{r4, lr}
-	b	goToWin
-.L84:
+.L81:
 	mov	r2, #67108864
 	ldrh	r3, [r2]
 	bic	r3, r3, #512
 	strh	r3, [r2]	@ movhi
 	pop	{r4, lr}
 	b	goToLose
-.L86:
+.L79:
+	mov	r2, #67108864
+	ldrh	r3, [r2]
+	bic	r3, r3, #512
+	strh	r3, [r2]	@ movhi
+	pop	{r4, lr}
+	b	goToPause
+.L80:
+	mov	r2, #67108864
+	ldrh	r3, [r2]
+	bic	r3, r3, #512
+	strh	r3, [r2]	@ movhi
+	pop	{r4, lr}
+	b	goToWin
+.L83:
 	.align	2
-.L85:
+.L82:
 	.word	updateGame
 	.word	drawGame
 	.word	oldButtons
 	.word	buttons
+	.word	livesRemaining
 	.size	game, .-game
 	.section	.text.startup,"ax",%progbits
 	.align	2
@@ -567,81 +565,81 @@ main:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r7, fp, lr}
-	ldr	r6, .L102
-	ldr	fp, .L102+4
-	ldr	r3, .L102+8
+	ldr	r6, .L99
+	ldr	fp, .L99+4
+	ldr	r3, .L99+8
 	mov	lr, pc
 	bx	r3
-	ldr	r5, .L102+12
+	ldr	r5, .L99+12
 	ldr	r2, [r6]
 	ldrh	r0, [fp]
-	ldr	r10, .L102+16
-	ldr	r9, .L102+20
-	ldr	r8, .L102+24
-	ldr	r7, .L102+28
-	ldr	r4, .L102+32
-.L89:
+	ldr	r10, .L99+16
+	ldr	r9, .L99+20
+	ldr	r8, .L99+24
+	ldr	r7, .L99+28
+	ldr	r4, .L99+32
+.L86:
 	strh	r0, [r5]	@ movhi
 	ldrh	r3, [r4, #48]
 	strh	r3, [fp]	@ movhi
 	cmp	r2, #5
 	ldrls	pc, [pc, r2, asl #2]
-	b	.L98
-.L91:
-	.word	.L96
-	.word	.L95
-	.word	.L94
+	b	.L95
+.L88:
 	.word	.L93
 	.word	.L92
+	.word	.L91
 	.word	.L90
+	.word	.L89
+	.word	.L87
+.L87:
+	tst	r0, #8
+	beq	.L95
+	ldr	r3, .L99+36
+	mov	lr, pc
+	bx	r3
+	ldr	r2, [r6]
+	ldrh	r0, [fp]
+	b	.L86
+.L89:
+	tst	r0, #8
+	beq	.L95
+	ldr	r3, .L99+40
+	mov	lr, pc
+	bx	r3
+	ldr	r2, [r6]
+	ldrh	r0, [fp]
+	b	.L86
 .L90:
-	tst	r0, #8
-	beq	.L98
-	ldr	r3, .L102+36
-	mov	lr, pc
-	bx	r3
-	ldr	r2, [r6]
-	ldrh	r0, [fp]
-	b	.L89
-.L92:
-	tst	r0, #8
-	beq	.L98
-	ldr	r3, .L102+40
-	mov	lr, pc
-	bx	r3
-	ldr	r2, [r6]
-	ldrh	r0, [fp]
-	b	.L89
-.L93:
 	mov	lr, pc
 	bx	r7
 	ldr	r2, [r6]
 	ldrh	r0, [fp]
-	b	.L89
-.L94:
+	b	.L86
+.L91:
 	mov	lr, pc
 	bx	r8
 	ldr	r2, [r6]
 	ldrh	r0, [fp]
-	b	.L89
-.L95:
+	b	.L86
+.L92:
 	mov	lr, pc
 	bx	r9
 	ldr	r2, [r6]
 	ldrh	r0, [fp]
-	b	.L89
-.L96:
+	b	.L86
+.L93:
 	mov	lr, pc
 	bx	r10
 	ldr	r2, [r6]
 	ldrh	r0, [fp]
-	b	.L89
-.L98:
+	b	.L86
+.L95:
 	mov	r0, r3
-	b	.L89
-.L103:
+	b	.L86
+.L100:
 	.align	2
-.L102:
+.L99:
 	.word	state
 	.word	buttons
 	.word	initialize
@@ -666,14 +664,14 @@ lose:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
-	ldr	r3, .L106
+	ldr	r3, .L103
 	ldrh	r3, [r3]
 	tst	r3, #8
 	bxeq	lr
 	b	lose.part.0
-.L107:
+.L104:
 	.align	2
-.L106:
+.L103:
 	.word	oldButtons
 	.size	lose, .-lose
 	.align	2
@@ -693,8 +691,11 @@ win:
 	.comm	shadowOAM,1024,4
 	.comm	oldButtons,2,2
 	.comm	buttons,2,2
-	.comm	wolves,104,4
+	.comm	hearts,72,4
+	.comm	gemNum,20,4
+	.comm	wolves,112,4
 	.comm	blocks,160,4
+	.comm	gemCounterIcon,32,4
 	.comm	gems,128,4
 	.comm	player,56,4
 	.comm	livesRemaining,4,4

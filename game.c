@@ -13,6 +13,10 @@ void initGame() {
     DMANow(3, FinalGameSpritesTiles, &CHARBLOCK[4], FinalGameSpritesTilesLen/2);
     DMANow(3, FinalGameSpritesPal, SPRITEPALETTE, FinalGameSpritesPalLen/2);
 
+    // Initializing counting variables
+    gemsRemaining = GEMCOUNT;
+    livesRemaining = LIFECOUNT;
+
     // Hide the sprites
     hideSprites();
 
@@ -36,6 +40,25 @@ void initGame() {
     // Initialize the wolves
     for (int i = 0; i < WOLF_COUNT; i++) {
         initWolves(&wolves[i], i);
+    }
+
+    // Initialize the gem counter icon
+    gemCounterIcon.width = 8;
+    gemCounterIcon.height = 8;
+    gemCounterIcon.worldCol = 8;
+    gemCounterIcon.worldRow = SCREENHEIGHT - 16;
+    gemCounterIcon.OAMpos = 7;
+
+    // Initialize the number that we use to count gems
+    gemNum.width = 8;
+    gemNum.height = 8;
+    gemNum.worldCol = 18;
+    gemNum.worldRow = SCREENHEIGHT - 16;
+    gemNum.OAMpos = 8;
+
+    // Initialize the heart icons
+    for (int i = 0; i < LIFECOUNT; i++) {
+        initHearts(&hearts[i], i);
     }
 
     // Initialize screen offsets
@@ -87,6 +110,7 @@ void initWolves(WOLF* w, int i) {
     w->height = 32;
     w->cvel = 1;
     w->direction = 1;
+    w->colliding = 0;
 
     if (i == 0) {
 
@@ -99,6 +123,18 @@ void initWolves(WOLF* w, int i) {
         w->worldRow = 152;
 
     }
+
+}
+
+// Helper to init hearts
+void initHearts(HEART* h, int i) {
+
+    h->active = 1;
+    h->width = 8;
+    h->height = 8;
+    h->worldRow = SCREENHEIGHT - 16;
+    h->worldCol = 224 - (16 * i);
+    h->OAMpos = 9 + i;
 
 }
 
@@ -116,6 +152,11 @@ void updateGame() {
     // Update wolf enemies
     for (int i = 0; i < WOLF_COUNT; i++) {
         updateWolves(&wolves[i]);
+    }
+
+    // Update heart sprites
+    for (int i = 0; i < LIFECOUNT; i++) {
+        updateHearts(&hearts[i]);
     }
 
 }
@@ -352,18 +393,30 @@ void updateWolves(WOLF* w) {
 
         } else {
 
-            // Otherwise g is on the screen and active, and you need
+            // Otherwise the wolf is on the screen and active, and you need
             // to check for player collisions
             if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, w->screenCol, w->screenRow + w->height/2, w->width, w->height)) {
 
-                // this is a TODO: If there is a collision with the cheat ON, turn off the gem
-                // w->active = 0;
+                
+                if (!w->colliding) {
+                    // Turn off the leftmost heart icon
+                    if ((LIFECOUNT-livesRemaining >= 0) && (LIFECOUNT - livesRemaining < 3)) {
+                        hearts[LIFECOUNT - livesRemaining].active = 0;
+                    }
 
-                // Decrement lives remaining counter if there is a collision
-                livesRemaining--;
+                    // Decrement lives remaining counter if there is a collision
+                    livesRemaining--;
+                }
+
+                w->colliding = 1;
+
+            } else {
+
+                w->colliding = 0;
 
             }
 
+            // Draw the wolf here (to avoid unecessary looping)
             shadowOAM[w->OAMpos].attr0 = (ROWMASK & w->screenRow) | ATTR0_SQUARE;
             shadowOAM[w->OAMpos].attr1 = (COLMASK & w->screenCol) | ATTR1_MEDIUM;
             shadowOAM[w->OAMpos].attr2 = ATTR2_TILEID(4, 0) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
@@ -379,11 +432,34 @@ void updateWolves(WOLF* w) {
 
 }
 
+// Helper to update heart sprites
+void updateHearts(HEART* h) {
+
+    if (h->active) {
+
+        shadowOAM[h->OAMpos].attr0 = (ROWMASK & h->worldRow) | ATTR0_SQUARE;
+        shadowOAM[h->OAMpos].attr1 = (COLMASK & h->worldCol) | ATTR1_TINY;
+        shadowOAM[h->OAMpos].attr2 = ATTR2_TILEID(8, 1) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
+
+    } else {
+
+        shadowOAM[h->OAMpos].attr0 = ATTR0_HIDE;
+
+    }
+
+}
+
 // Draw sprites
 void drawGame() {
 
     // Call helper to draw player
     drawPlayer();
+
+    // Call helper to draw gem icon
+    drawGemCounterIcon();
+
+    // Call helper to draw gem Num
+    drawGemNum();
 
     waitForVBlank();
     DMANow(3, shadowOAM, OAM, 128*4);
@@ -400,5 +476,23 @@ void drawPlayer() {
     shadowOAM[0].attr0 = (ROWMASK & player.screenRow) | ATTR0_SQUARE;
     shadowOAM[0].attr1 = (COLMASK & player.screenCol) | ATTR1_MEDIUM;
     shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+
+}
+
+// Helper to draw the gem counter icon
+void drawGemCounterIcon() {
+
+    shadowOAM[gemCounterIcon.OAMpos].attr0 = (ROWMASK & gemCounterIcon.worldRow) | ATTR0_SQUARE;
+    shadowOAM[gemCounterIcon.OAMpos].attr1 = (COLMASK & gemCounterIcon.worldCol) | ATTR1_TINY;
+    shadowOAM[gemCounterIcon.OAMpos].attr2 = ATTR2_TILEID(8, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+
+}
+
+// Helper to draw the number of gems collected
+void drawGemNum() {
+
+    shadowOAM[gemNum.OAMpos].attr0 = (ROWMASK & gemNum.worldRow) | ATTR0_SQUARE;
+    shadowOAM[gemNum.OAMpos].attr1 = (COLMASK & gemNum.worldCol) | ATTR1_TINY;
+    shadowOAM[gemNum.OAMpos].attr2 = ATTR2_TILEID(8, 2 + gemsRemaining) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
 }
