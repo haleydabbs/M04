@@ -81,6 +81,22 @@ typedef struct {
 
 } HEART;
 
+typedef struct {
+
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+    int worldCol;
+    int screenCol;
+    int worldRow;
+    int screenRow;
+    int cvel;
+    int rvel;
+    int aniState;
+
+} STATUE;
+
 // Variables
 
 // Constants
@@ -111,6 +127,7 @@ GAMEBAR blocks[GAMEBAR_BLOCK_COUNT];
 WOLF wolves[WOLF_COUNT];
 GEMNUM gemNum;
 HEART hearts[LIFECOUNT];
+STATUE statue;
 
 // Player state enum
 
@@ -126,8 +143,10 @@ void updatePlayer();
 void updateGems(GEM*);
 void updateWolves(WOLF*);
 void updateHearts(HEART*);
+void updateState();
 
 void drawGame();
 void drawPlayer();
 void drawGemCounterIcon();
 void drawGemNum();
+void drawStatue();

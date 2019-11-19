@@ -161,7 +161,23 @@ typedef struct {
     int active;
 
 } HEART;
-# 99 "game.h"
+
+typedef struct {
+
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+    int worldCol;
+    int screenCol;
+    int worldRow;
+    int screenRow;
+    int cvel;
+    int rvel;
+    int aniState;
+
+} STATUE;
+# 115 "game.h"
 int hOff;
 int vOff;
 
@@ -177,6 +193,7 @@ GAMEBAR blocks[8];
 WOLF wolves[2];
 GEMNUM gemNum;
 HEART hearts[3];
+STATUE statue;
 
 
 
@@ -192,11 +209,13 @@ void updatePlayer();
 void updateGems(GEM*);
 void updateWolves(WOLF*);
 void updateHearts(HEART*);
+void updateState();
 
 void drawGame();
 void drawPlayer();
 void drawGemCounterIcon();
 void drawGemNum();
+void drawStatue();
 # 4 "main.c" 2
 # 1 "startBG.h" 1
 # 22 "startBG.h"

@@ -1643,7 +1643,23 @@ typedef struct {
     int active;
 
 } HEART;
-# 99 "game.h"
+
+typedef struct {
+
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+    int worldCol;
+    int screenCol;
+    int worldRow;
+    int screenRow;
+    int cvel;
+    int rvel;
+    int aniState;
+
+} STATUE;
+# 115 "game.h"
 int hOff;
 int vOff;
 
@@ -1659,6 +1675,7 @@ GAMEBAR blocks[8];
 WOLF wolves[2];
 GEMNUM gemNum;
 HEART hearts[3];
+STATUE statue;
 
 
 
@@ -1674,11 +1691,13 @@ void updatePlayer();
 void updateGems(GEM*);
 void updateWolves(WOLF*);
 void updateHearts(HEART*);
+void updateState();
 
 void drawGame();
 void drawPlayer();
 void drawGemCounterIcon();
 void drawGemNum();
+void drawStatue();
 # 7 "game.c" 2
 # 1 "collisionMap.h" 1
 # 20 "collisionMap.h"
@@ -1739,6 +1758,15 @@ void initGame() {
     for (int i = 0; i < 3; i++) {
         initHearts(&hearts[i], i);
     }
+
+
+    statue.width = 32;
+    statue.height = 32;
+    statue.worldCol = 256/2 + statue.width/2;
+    statue.worldRow = 512 - 16 - statue.height;
+    statue.active = 1;
+    statue.OAMpos = 12;
+    statue.aniState = 0;
 
 
     vOff = 512 - 160;
@@ -1822,6 +1850,8 @@ void updateGame() {
 
 
     updatePlayer();
+
+
 
 
     for (int i = 0; i < 4; i++) {
@@ -1972,6 +2002,14 @@ void updatePlayer() {
 }
 
 
+void updateState() {
+
+    statue.screenRow = statue.worldRow - vOff;
+    statue.screenCol = statue.worldCol - hOff;
+
+}
+
+
 void updateGems(GEM* g) {
 
 
@@ -2098,7 +2136,7 @@ void updateWolves(WOLF* w) {
 
             shadowOAM[w->OAMpos].attr0 = (0xFF & w->screenRow) | (0<<14);
             shadowOAM[w->OAMpos].attr1 = (0x1FF & w->screenCol) | (2<<14);
-            shadowOAM[w->OAMpos].attr2 = ((0)*32+(4)) | ((1)<<12) | ((0)<<10);
+            shadowOAM[w->OAMpos].attr2 = ((w->aniFrame)*32+(4)) | ((1)<<12) | ((0)<<10);
 
         }
 
@@ -2140,6 +2178,9 @@ void drawGame() {
 
     drawGemNum();
 
+
+    drawStatue();
+
     waitForVBlank();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128*4);
 
@@ -2173,5 +2214,23 @@ void drawGemNum() {
     shadowOAM[gemNum.OAMpos].attr0 = (0xFF & gemNum.worldRow) | (0<<14);
     shadowOAM[gemNum.OAMpos].attr1 = (0x1FF & gemNum.worldCol) | (0<<14);
     shadowOAM[gemNum.OAMpos].attr2 = ((2 + gemsRemaining)*32+(8)) | ((0)<<12) | ((0)<<10);
+
+}
+
+
+void drawStatue() {
+
+
+    if (statue.screenRow > 160 || statue.screenRow + statue.height < 0) {
+
+        shadowOAM[statue.OAMpos].attr0 = (2<<8);
+
+    } else {
+
+    shadowOAM[statue.OAMpos].attr0 = (0xFF & statue.screenRow) | (0<<14);
+    shadowOAM[statue.OAMpos].attr1 = (0x1FF & statue.screenCol) | (2<<14);
+    shadowOAM[statue.OAMpos].attr2 = ((statue.aniState)*32+(9)) | ((0)<<12) | ((0)<<10);
+
+    }
 
 }

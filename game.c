@@ -61,6 +61,15 @@ void initGame() {
         initHearts(&hearts[i], i);
     }
 
+    // Initialize the statue
+    statue.width = 32;
+    statue.height = 32;
+    statue.worldCol = MAPWIDTH/2 + statue.width/2;
+    statue.worldRow = MAPHEIGHT - 16 - statue.height;
+    statue.active = 1;
+    statue.OAMpos = 12;
+    statue.aniState = 0;
+
     // Initialize screen offsets
     vOff = MAPHEIGHT - SCREENHEIGHT;
     hOff = 0;
@@ -143,6 +152,8 @@ void updateGame() {
 
     // Update player sprite
     updatePlayer();
+
+    // Update statue sprite
 
     // Update gems for player to collect on screen
     for (int i = 0; i < GEMCOUNT; i++) {
@@ -292,6 +303,14 @@ void updatePlayer() {
 
 }
 
+// Helper to update the statue sprite
+void updateState() {
+
+    statue.screenRow = statue.worldRow - vOff;
+    statue.screenCol = statue.worldCol - hOff;
+
+}
+
 // Helper to update the gems
 void updateGems(GEM* g) {
 
@@ -419,7 +438,7 @@ void updateWolves(WOLF* w) {
             // Draw the wolf here (to avoid unecessary looping)
             shadowOAM[w->OAMpos].attr0 = (ROWMASK & w->screenRow) | ATTR0_SQUARE;
             shadowOAM[w->OAMpos].attr1 = (COLMASK & w->screenCol) | ATTR1_MEDIUM;
-            shadowOAM[w->OAMpos].attr2 = ATTR2_TILEID(4, 0) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
+            shadowOAM[w->OAMpos].attr2 = ATTR2_TILEID(4, w->aniFrame) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
 
         }
 
@@ -461,6 +480,9 @@ void drawGame() {
     // Call helper to draw gem Num
     drawGemNum();
 
+    // Call helper to draw the statue
+    drawStatue();
+
     waitForVBlank();
     DMANow(3, shadowOAM, OAM, 128*4);
 
@@ -494,5 +516,23 @@ void drawGemNum() {
     shadowOAM[gemNum.OAMpos].attr0 = (ROWMASK & gemNum.worldRow) | ATTR0_SQUARE;
     shadowOAM[gemNum.OAMpos].attr1 = (COLMASK & gemNum.worldCol) | ATTR1_TINY;
     shadowOAM[gemNum.OAMpos].attr2 = ATTR2_TILEID(8, 2 + gemsRemaining) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+
+}
+
+// Helper to draw the statue
+void drawStatue() {
+
+
+    if (statue.screenRow > 160 || statue.screenRow + statue.height < 0) {
+
+        shadowOAM[statue.OAMpos].attr0 = ATTR0_HIDE;
+
+    } else {
+
+    shadowOAM[statue.OAMpos].attr0 = (ROWMASK & statue.screenRow) | ATTR0_SQUARE;
+    shadowOAM[statue.OAMpos].attr1 = (COLMASK & statue.screenCol) | ATTR1_MEDIUM;
+    shadowOAM[statue.OAMpos].attr2 = ATTR2_TILEID(9, statue.aniState) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+    
+    }
 
 }

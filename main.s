@@ -691,6 +691,7 @@ win:
 	.comm	shadowOAM,1024,4
 	.comm	oldButtons,2,2
 	.comm	buttons,2,2
+	.comm	statue,44,4
 	.comm	hearts,72,4
 	.comm	gemNum,20,4
 	.comm	wolves,112,4
