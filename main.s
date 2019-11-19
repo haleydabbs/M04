@@ -72,7 +72,7 @@ initialize:
 	strh	r3, [r5, #8]	@ movhi
 	mov	r0, #3
 	strh	r2, [r5, #10]	@ movhi
-	mov	r3, #32
+	mov	r3, #1152
 	ldr	r2, .L8+8
 	ldr	r1, .L8+12
 	mov	lr, pc
@@ -84,7 +84,7 @@ initialize:
 	mov	lr, pc
 	bx	r4
 	ldr	r2, .L8+24
-	mov	r3, #896
+	mov	r3, #32
 	strh	r2, [r5, #12]	@ movhi
 	mov	r0, #3
 	ldr	r2, .L8+28
@@ -693,7 +693,8 @@ win:
 	.comm	shadowOAM,1024,4
 	.comm	oldButtons,2,2
 	.comm	buttons,2,2
-	.comm	gem,32,4
+	.comm	wolves,104,4
+	.comm	blocks,160,4
 	.comm	gems,128,4
 	.comm	player,56,4
 	.comm	livesRemaining,4,4

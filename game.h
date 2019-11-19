@@ -31,6 +31,34 @@ typedef struct {
 
 } GEM;
 
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+
+} GAMEBAR;
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int screenRow;
+    int screenCol;
+    int width;
+    int height;
+    int active;
+    int OAMpos;
+    int aniCounter;
+    int aniState;
+    int aniFrame;
+    int cvel;
+    int direction;
+
+} WOLF;
+
 // Variables
 
 // Constants
@@ -42,6 +70,8 @@ typedef struct {
 # define FP_SCALING_FACTOR 1024
 # define RVEL_MAX 6
 # define RVEL_MAX_FP (RVEL_MAX * 1024)
+# define GAMEBAR_BLOCK_COUNT 8
+# define WOLF_COUNT 2
 
 // Offset
 int hOff;
@@ -54,7 +84,8 @@ int livesRemaining;
 // Struct inits
 PLAYER player;
 GEM gems[GEMCOUNT];
-GEM gem;
+GAMEBAR blocks[GAMEBAR_BLOCK_COUNT];
+WOLF wolves[WOLF_COUNT];
 
 // Player state enum
 
@@ -62,11 +93,12 @@ GEM gem;
 
 void initGame();
 void initGems(GEM*, int);
+void initWolves(WOLF*, int);
 
 void updateGame();
 void updatePlayer();
 void updateGems(GEM*);
+void updateWolves(WOLF*);
 
 void drawGame();
 void drawPlayer();
-void drawGem();

@@ -1593,7 +1593,35 @@ typedef struct {
     int OAMpos;
 
 } GEM;
-# 47 "game.h"
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+
+} GAMEBAR;
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int screenRow;
+    int screenCol;
+    int width;
+    int height;
+    int active;
+    int OAMpos;
+    int aniCounter;
+    int aniState;
+    int aniFrame;
+    int cvel;
+    int direction;
+
+} WOLF;
+# 77 "game.h"
 int hOff;
 int vOff;
 
@@ -1604,7 +1632,8 @@ int livesRemaining;
 
 PLAYER player;
 GEM gems[4];
-GEM gem;
+GAMEBAR blocks[8];
+WOLF wolves[2];
 
 
 
@@ -1612,14 +1641,15 @@ GEM gem;
 
 void initGame();
 void initGems(GEM*, int);
+void initWolves(WOLF*, int);
 
 void updateGame();
 void updatePlayer();
 void updateGems(GEM*);
+void updateWolves(WOLF*);
 
 void drawGame();
 void drawPlayer();
-void drawGem();
 # 7 "game.c" 2
 # 1 "collisionMap.h" 1
 # 20 "collisionMap.h"
@@ -1649,16 +1679,13 @@ void initGame() {
     player.rvel_FP = 0;
 
 
-    gem.width = 8;
-    gem.height = 8;
-    gem.worldRow = 8;
-    gem.worldCol = 8;
-    gem.active = 1;
-    gem.OAMpos = 1;
-
-
     for (int i = 0; i < 4; i++) {
         initGems(&gems[i], i);
+    }
+
+
+    for (int i = 0; i < 2; i++) {
+        initWolves(&wolves[i], i);
     }
 
 
@@ -1670,12 +1697,58 @@ void initGame() {
 
 void initGems(GEM* g, int i) {
 
-    g->OAMpos = 2 + i;
+    g->OAMpos = 1 + i;
     g->width = 8;
     g->height = 8;
-    g->worldCol = (10 * i) + 200;
-    g->worldRow = 512 - 16 - g->height;
+
+
+    if (i == 0) {
+
+        g->worldCol = 104;
+        g->worldRow = 104;
+
+    } else if (i == 1) {
+
+        g->worldCol = 240;
+        g->worldRow = 176;
+
+    } else if (i == 2) {
+
+        g->worldCol = 128;
+        g->worldRow = 56;
+
+    } else if (i == 3) {
+
+        g->worldCol = 16;
+        g->worldRow = 256;
+
+    }
+
     g->active = 1;
+
+}
+
+
+void initWolves(WOLF* w, int i) {
+
+    w->active = 1;
+    w->OAMpos = 5 + i;
+    w->width = 32;
+    w->height = 32;
+    w->cvel = 1;
+    w->direction = 1;
+
+    if (i == 0) {
+
+        w->worldCol = 16;
+        w->worldRow = 32;
+
+    } else if (i == 1) {
+
+        w->worldCol = 96;
+        w->worldRow = 152;
+
+    }
 
 }
 
@@ -1686,8 +1759,13 @@ void updateGame() {
     updatePlayer();
 
 
-    for (int i = 0; i < (4); i++) {
+    for (int i = 0; i < 4; i++) {
         updateGems(&gems[i]);
+    }
+
+
+    for (int i = 0; i < 2; i++) {
+        updateWolves(&wolves[i]);
     }
 
 }
@@ -1818,9 +1896,6 @@ void updatePlayer() {
     player.worldRow_FP += player.rvel_FP;
 
 
-
-
-
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
 
@@ -1829,12 +1904,128 @@ void updatePlayer() {
 
 void updateGems(GEM* g) {
 
-    g->screenCol = g->worldCol - hOff;
-    g->screenRow = g->worldRow - vOff;
 
-    shadowOAM[g->OAMpos].attr0 = (0xFF & g->screenRow) | (0<<14);
-    shadowOAM[g->OAMpos].attr1 = (0x1FF & g->screenCol) | (0<<14);
-    shadowOAM[g->OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
+    if (g->active) {
+
+
+        g->screenCol = g->worldCol - hOff;
+        g->screenRow = g->worldRow - vOff;
+
+
+        if (g->screenRow > 160 || g->screenRow + g->height < 0) {
+
+            shadowOAM[g->OAMpos].attr0 = (2<<8);
+
+        } else {
+
+
+
+            if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, g->screenCol, g->screenRow, g->width, g->height)) {
+
+
+                g->active = 0;
+
+
+                gemsRemaining--;
+
+            }
+
+            shadowOAM[g->OAMpos].attr0 = (0xFF & g->screenRow) | (0<<14);
+            shadowOAM[g->OAMpos].attr1 = (0x1FF & g->screenCol) | (0<<14);
+            shadowOAM[g->OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
+
+        }
+
+    } else {
+
+
+        shadowOAM[g->OAMpos].attr0 = (2<<8);
+
+    }
+
+}
+
+
+void updateWolves(WOLF* w) {
+
+
+
+    if (w->active) {
+
+        w->aniCounter++;
+
+
+        w->screenCol = w->worldCol - hOff;
+        w->screenRow = w->worldRow - vOff;
+
+        if (w->aniCounter == 1) {
+
+            if (w->direction == 1) {
+
+
+
+                if ((w->worldCol + w->width > 256)
+                || !(collisionMapBitmap[((w->worldRow + w->height/2)*(256)+(w->worldCol + w->width - 1 + w->cvel))])
+                || !(collisionMapBitmap[((w->worldRow + w->height - 1)*(256)+(w->worldCol + w->width - 1 + w->cvel))])
+                || (collisionMapBitmap[((w->worldRow + w->height)*(256)+(w->worldCol + w->width - 1 + w->cvel))])) {
+                    w->direction = 0;
+                } else {
+
+                    w->worldCol++;
+                }
+
+            }
+
+            if (w->direction == 0) {
+
+
+
+                if ((w->worldCol < 0)
+                || !(collisionMapBitmap[((w->worldRow + w->height/2)*(256)+(w->worldCol - w->cvel))])
+                || !(collisionMapBitmap[((w->worldRow + w->height - 1)*(256)+(w->worldCol - w->cvel))])
+                || (collisionMapBitmap[((w->worldRow + w->height)*(256)+(w->worldCol - w->cvel))])) {
+                    w->direction = 1;
+                } else {
+
+                    w->worldCol--;
+                }
+
+            }
+
+            w->aniCounter = 0;
+        }
+
+
+        if (w->screenRow > 160 || w->screenRow + w->height < 0) {
+
+            shadowOAM[w->OAMpos].attr0 = (2<<8);
+
+        } else {
+
+
+
+            if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, w->screenCol, w->screenRow + w->height/2, w->width, w->height)) {
+
+
+
+
+
+                livesRemaining--;
+
+            }
+
+            shadowOAM[w->OAMpos].attr0 = (0xFF & w->screenRow) | (0<<14);
+            shadowOAM[w->OAMpos].attr1 = (0x1FF & w->screenCol) | (2<<14);
+            shadowOAM[w->OAMpos].attr2 = ((0)*32+(4)) | ((1)<<12) | ((0)<<10);
+
+        }
+
+    } else {
+
+
+        shadowOAM[w->OAMpos].attr0 = (2<<8);
+
+    }
 
 }
 
@@ -1843,9 +2034,6 @@ void drawGame() {
 
 
     drawPlayer();
-
-
-    drawGem();
 
     waitForVBlank();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128*4);
@@ -1862,14 +2050,5 @@ void drawPlayer() {
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
     shadowOAM[0].attr2 = ((0)*32+(player.aniState * 4)) | ((0)<<12) | ((0)<<10);
-
-}
-
-
-void drawGem() {
-
-    shadowOAM[gem.OAMpos].attr0 = (0xFF & gem.worldRow) | (0<<14);
-    shadowOAM[gem.OAMpos].attr1 = (0x1FF & gem.worldCol) | (0<<14);
-    shadowOAM[gem.OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
 
 }

@@ -111,7 +111,35 @@ typedef struct {
     int OAMpos;
 
 } GEM;
-# 47 "game.h"
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int OAMpos;
+
+} GAMEBAR;
+
+typedef struct {
+
+    int worldRow;
+    int worldCol;
+    int screenRow;
+    int screenCol;
+    int width;
+    int height;
+    int active;
+    int OAMpos;
+    int aniCounter;
+    int aniState;
+    int aniFrame;
+    int cvel;
+    int direction;
+
+} WOLF;
+# 77 "game.h"
 int hOff;
 int vOff;
 
@@ -122,7 +150,8 @@ int livesRemaining;
 
 PLAYER player;
 GEM gems[4];
-GEM gem;
+GAMEBAR blocks[8];
+WOLF wolves[2];
 
 
 
@@ -130,14 +159,15 @@ GEM gem;
 
 void initGame();
 void initGems(GEM*, int);
+void initWolves(WOLF*, int);
 
 void updateGame();
 void updatePlayer();
 void updateGems(GEM*);
+void updateWolves(WOLF*);
 
 void drawGame();
 void drawPlayer();
-void drawGem();
 # 4 "main.c" 2
 # 1 "startBG.h" 1
 # 22 "startBG.h"
@@ -151,7 +181,7 @@ extern const unsigned short startBGPal[256];
 # 5 "main.c" 2
 # 1 "gameBG.h" 1
 # 22 "gameBG.h"
-extern const unsigned short gameBGTiles[896];
+extern const unsigned short gameBGTiles[32];
 
 
 extern const unsigned short gameBGMap[1024];
@@ -191,7 +221,7 @@ extern const unsigned short winBGPal[256];
 # 9 "main.c" 2
 # 1 "platformsBG.h" 1
 # 22 "platformsBG.h"
-extern const unsigned short platformsBGTiles[32];
+extern const unsigned short platformsBGTiles[1152];
 
 
 extern const unsigned short platformsBGMap[2048];
@@ -288,12 +318,12 @@ void initialize() {
 
 
     (*(volatile unsigned short*)0x400000A) = ((1)<<2) | ((14)<<8) | (2<<14);
-    DMANow(3, platformsBGTiles, &((charblock *)0x6000000)[1], 64 / 2);
+    DMANow(3, platformsBGTiles, &((charblock *)0x6000000)[1], 2304 / 2);
     DMANow(3, platformsBGMap, &((screenblock *)0x6000000)[14], 4096 / 2);
 
 
     (*(volatile unsigned short*)0x400000C) = ((2)<<2) | ((20)<<8) | (0<<14);
-    DMANow(3, gameBGTiles, &((charblock *)0x6000000)[2], 1792 / 2);
+    DMANow(3, gameBGTiles, &((charblock *)0x6000000)[2], 64 / 2);
     DMANow(3, gameBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
 

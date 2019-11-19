@@ -28,17 +28,14 @@ void initGame() {
     player.rvel = 0;
     player.rvel_FP = 0;
 
-    // Init counter gem sprite
-    gem.width = 8;
-    gem.height = 8;
-    gem.worldRow = 8;
-    gem.worldCol = 8;
-    gem.active = 1;
-    gem.OAMpos = 1;
-
     // Initialize gems that need to be collected
     for (int i = 0; i < GEMCOUNT; i++) {
         initGems(&gems[i], i);
+    }
+
+    // Initialize the wolves
+    for (int i = 0; i < WOLF_COUNT; i++) {
+        initWolves(&wolves[i], i);
     }
 
     // Initialize screen offsets
@@ -50,12 +47,58 @@ void initGame() {
 // Helper function to init gems
 void initGems(GEM* g, int i) {
 
-    g->OAMpos = 2 + i;
+    g->OAMpos = 1 + i;
     g->width = 8;
     g->height = 8;
-    g->worldCol = (10 * i) + 200;
-    g->worldRow = MAPHEIGHT - 16 - g->height;
+
+    // Setting positions for individual gems here
+    if (i == 0) {
+
+        g->worldCol = 104;
+        g->worldRow = 104;
+
+    } else if (i == 1) {
+
+        g->worldCol = 240;
+        g->worldRow = 176;
+
+    } else if (i == 2) {
+
+        g->worldCol = 128;
+        g->worldRow = 56;
+
+    } else if (i == 3) {
+
+        g->worldCol = 16;
+        g->worldRow = 256;
+
+    }
+    
     g->active = 1;
+
+}
+
+// Helper to initialize wolf enemies
+void initWolves(WOLF* w, int i) {
+
+    w->active = 1;
+    w->OAMpos = 5 + i;
+    w->width = 32;
+    w->height = 32;
+    w->cvel = 1;
+    w->direction = 1;
+
+    if (i == 0) {
+
+        w->worldCol = 16;
+        w->worldRow = 32;
+
+    } else if (i == 1) {
+
+        w->worldCol = 96;
+        w->worldRow = 152;
+
+    }
 
 }
 
@@ -66,8 +109,13 @@ void updateGame() {
     updatePlayer();
 
     // Update gems for player to collect on screen
-    for (int i = 0; i < (GEMCOUNT); i++) {
+    for (int i = 0; i < GEMCOUNT; i++) {
         updateGems(&gems[i]);
+    }
+
+    // Update wolf enemies
+    for (int i = 0; i < WOLF_COUNT; i++) {
+        updateWolves(&wolves[i]);
     }
 
 }
@@ -197,10 +245,7 @@ void updatePlayer() {
     // Gravity logic
     player.worldRow_FP += player.rvel_FP;
 
-    // This logic works if I don't want complex movement, and just want the camera to
-    // follow the exact location of the player
-    //vOff = MAPHEIGHT - SCREENHEIGHT - (((MAPHEIGHT - 32 - player.height) - player.worldRow));
-
+    // Update player screen row and column coordinates
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;    
 
@@ -209,12 +254,128 @@ void updatePlayer() {
 // Helper to update the gems
 void updateGems(GEM* g) {
 
-    g->screenCol = g->worldCol - hOff;
-    g->screenRow = g->worldRow - vOff;
+    // Check to see if g is active before updating
+    if (g->active) {
 
-    shadowOAM[g->OAMpos].attr0 = (ROWMASK & g->screenRow) | ATTR0_SQUARE;
-    shadowOAM[g->OAMpos].attr1 = (COLMASK & g->screenCol) | ATTR1_TINY;
-    shadowOAM[g->OAMpos].attr2 = ATTR2_TILEID(8, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+        // First, update screen column and row coordinates
+        g->screenCol = g->worldCol - hOff;
+        g->screenRow = g->worldRow - vOff;
+
+        // If gem's screen coordinates are off the screen, hide it
+        if (g->screenRow > 160 || g->screenRow + g->height < 0) {
+
+            shadowOAM[g->OAMpos].attr0 = ATTR0_HIDE;
+
+        } else {
+
+            // Otherwise g is on the screen and active, and you need
+            // to check for player collisions
+            if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, g->screenCol, g->screenRow, g->width, g->height)) {
+
+                // If there is a collision, turn off the gem
+                g->active = 0;
+
+                // Decrement gems remaining counter
+                gemsRemaining--;
+
+            }
+
+            shadowOAM[g->OAMpos].attr0 = (ROWMASK & g->screenRow) | ATTR0_SQUARE;
+            shadowOAM[g->OAMpos].attr1 = (COLMASK & g->screenCol) | ATTR1_TINY;
+            shadowOAM[g->OAMpos].attr2 = ATTR2_TILEID(8, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+
+        }
+
+    } else {
+        
+        // Else if g isn't active, make sure it's hidden
+        shadowOAM[g->OAMpos].attr0 = ATTR0_HIDE;
+
+    }
+
+}
+
+// Helper to update the wolves
+void updateWolves(WOLF* w) {
+
+    // First, check if wolf is active
+    // This should be helpful when implementing the cheat to kill wolves
+    if (w->active) {
+
+        w->aniCounter++;
+
+        // First, update screen column and row coordinates
+        w->screenCol = w->worldCol - hOff;
+        w->screenRow = w->worldRow - vOff;
+
+        if (w->aniCounter == 1) {
+            // Detect if the wolf can continue moving in its current direction ( 1 = right, 0 = left)
+            if (w->direction == 1) {
+
+                // If the wolf is moving to the right,
+                // If it will extend past the map limit, hit a wall, or go over an empty ledge, flip the direction
+                if ((w->worldCol + w->width > MAPWIDTH)
+                || !(collisionMapBitmap[OFFSET(w->worldCol + w->width - 1 + w->cvel, w->worldRow + w->height/2, MAPWIDTH)])
+                || !(collisionMapBitmap[OFFSET(w->worldCol + w->width - 1 + w->cvel, w->worldRow + w->height - 1, MAPWIDTH)])
+                || (collisionMapBitmap[OFFSET(w->worldCol + w->width - 1 + w->cvel, w->worldRow + w->height, MAPWIDTH)])) {
+                    w->direction = 0;
+                } else {
+                    // Else, keep moving right
+                    w->worldCol++;
+                }  
+
+            } 
+
+            if (w->direction == 0) {
+
+                // If the wolf is moving to the left,
+                // If it will extend past the map limit, hit a wall, or go over empty ledge, flip the direction
+                if ((w->worldCol < 0)
+                || !(collisionMapBitmap[OFFSET(w->worldCol - w->cvel, w->worldRow + w->height/2, MAPWIDTH)])
+                || !(collisionMapBitmap[OFFSET(w->worldCol - w->cvel, w->worldRow + w->height - 1, MAPWIDTH)])
+                || (collisionMapBitmap[OFFSET(w->worldCol - w->cvel, w->worldRow + w->height, MAPWIDTH)])) {
+                    w->direction = 1;
+                } else {
+                    // Else, keep moving left
+                    w->worldCol--;
+                }
+
+            }
+
+            w->aniCounter = 0;
+        }
+
+        // If wolf's screen coordinates are off the screen, hide it
+        if (w->screenRow > 160 || w->screenRow + w->height < 0) {
+
+            shadowOAM[w->OAMpos].attr0 = ATTR0_HIDE;
+
+        } else {
+
+            // Otherwise g is on the screen and active, and you need
+            // to check for player collisions
+            if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, w->screenCol, w->screenRow + w->height/2, w->width, w->height)) {
+
+                // this is a TODO: If there is a collision with the cheat ON, turn off the gem
+                // w->active = 0;
+
+                // Decrement lives remaining counter if there is a collision
+                livesRemaining--;
+
+            }
+
+            shadowOAM[w->OAMpos].attr0 = (ROWMASK & w->screenRow) | ATTR0_SQUARE;
+            shadowOAM[w->OAMpos].attr1 = (COLMASK & w->screenCol) | ATTR1_MEDIUM;
+            shadowOAM[w->OAMpos].attr2 = ATTR2_TILEID(4, 0) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
+
+        }
+
+    } else {
+
+        // If wolf isn't active, make sure it's hidden
+        shadowOAM[w->OAMpos].attr0 = ATTR0_HIDE;
+
+    }
 
 }
 
@@ -223,9 +384,6 @@ void drawGame() {
 
     // Call helper to draw player
     drawPlayer();
-
-    // Call the helper that draws the gem
-    drawGem();
 
     waitForVBlank();
     DMANow(3, shadowOAM, OAM, 128*4);
@@ -242,14 +400,5 @@ void drawPlayer() {
     shadowOAM[0].attr0 = (ROWMASK & player.screenRow) | ATTR0_SQUARE;
     shadowOAM[0].attr1 = (COLMASK & player.screenCol) | ATTR1_MEDIUM;
     shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
-
-}
-
-// Helper to draw gem counter sprite
-void drawGem() {
-
-    shadowOAM[gem.OAMpos].attr0 = (ROWMASK & gem.worldRow) | ATTR0_SQUARE;
-    shadowOAM[gem.OAMpos].attr1 = (COLMASK & gem.worldCol) | ATTR1_TINY;
-    shadowOAM[gem.OAMpos].attr2 = ATTR2_TILEID(8, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
 }
