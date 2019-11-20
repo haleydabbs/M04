@@ -16,6 +16,7 @@ void initGame() {
     // Initializing counting variables
     gemsRemaining = GEMCOUNT;
     livesRemaining = LIFECOUNT;
+    statueLivesRemaining = GEMCOUNT;
 
     // Hide the sprites
     hideSprites();
@@ -69,6 +70,7 @@ void initGame() {
     statue.active = 1;
     statue.OAMpos = 12;
     statue.aniState = 0;
+    statue.attack = 0;
 
     // Initialize screen offsets
     vOff = MAPHEIGHT - SCREENHEIGHT;
@@ -307,6 +309,32 @@ void updatePlayer() {
 // Helper to update the statue sprite
 void updateStatue() {
 
+    // If the player has collected all of the gems AND drops them off at the statue
+    // AND the statue is on screen
+    // turn statue to evil mode >:(
+    if ( (statue.screenRow <= 160)
+    && (statue.screenRow + statue.height >= 0)
+    && (gemsRemaining == 0)
+    && collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow, statue.width, statue.height)) {
+
+        statue.aniState = 20;
+        statue.attack = 1;
+
+    }
+
+    // If the statue is in attack mode
+    // if (statue.attack) {
+
+
+    //     if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow, statue.width, statue.height)) {
+
+    //         statueLivesRemaining--;
+
+    //     }
+
+    // }
+
+    // Update statue screenRow and screenCol
     statue.screenRow = statue.worldRow - vOff;
     statue.screenCol = statue.worldCol - hOff;
 
@@ -341,6 +369,7 @@ void updateGems(GEM* g) {
 
             }
 
+            // Draw gems here to avoid repetitive looping
             shadowOAM[g->OAMpos].attr0 = (ROWMASK & g->screenRow) | ATTR0_SQUARE;
             shadowOAM[g->OAMpos].attr1 = (COLMASK & g->screenCol) | ATTR1_TINY;
             shadowOAM[g->OAMpos].attr2 = ATTR2_TILEID(8, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
@@ -363,6 +392,7 @@ void updateWolves(WOLF* w) {
     // This should be helpful when implementing the cheat to kill wolves
     if (w->active) {
 
+        // Increment anicounter to delay movement
         w->aniCounter++;
 
         // First, update screen column and row coordinates
@@ -403,6 +433,7 @@ void updateWolves(WOLF* w) {
 
             }
 
+            // Restart anicounter
             w->aniCounter = 0;
         }
 
@@ -428,6 +459,8 @@ void updateWolves(WOLF* w) {
                     livesRemaining--;
                 }
 
+                // Using this switch variable to prevent collision from instantly
+                // decrementing all lives
                 w->colliding = 1;
 
             } else {
@@ -457,12 +490,14 @@ void updateHearts(HEART* h) {
 
     if (h->active) {
 
+        // If the heart is still active, draw it
         shadowOAM[h->OAMpos].attr0 = (ROWMASK & h->worldRow) | ATTR0_SQUARE;
         shadowOAM[h->OAMpos].attr1 = (COLMASK & h->worldCol) | ATTR1_TINY;
         shadowOAM[h->OAMpos].attr2 = ATTR2_TILEID(8, 1) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
 
     } else {
 
+        // Otherwise, hide it
         shadowOAM[h->OAMpos].attr0 = ATTR0_HIDE;
 
     }
@@ -523,16 +558,17 @@ void drawGemNum() {
 // Helper to draw the statue
 void drawStatue() {
 
-
+    // If the statue is off screen, hide it
     if (statue.screenRow > 160 || statue.screenRow + statue.height < 0) {
 
         shadowOAM[statue.OAMpos].attr0 = ATTR0_HIDE;
 
     } else {
 
-    shadowOAM[statue.OAMpos].attr0 = (ROWMASK & statue.screenRow) | ATTR0_SQUARE;
-    shadowOAM[statue.OAMpos].attr1 = (COLMASK & statue.screenCol) | ATTR1_MEDIUM;
-    shadowOAM[statue.OAMpos].attr2 = ATTR2_TILEID(9, statue.aniState) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+        // Otherwise, draw it
+        shadowOAM[statue.OAMpos].attr0 = (ROWMASK & statue.screenRow) | ATTR0_SQUARE;
+        shadowOAM[statue.OAMpos].attr1 = (COLMASK & statue.screenCol) | ATTR1_MEDIUM;
+        shadowOAM[statue.OAMpos].attr2 = ATTR2_TILEID(9, statue.aniState) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
     }
 

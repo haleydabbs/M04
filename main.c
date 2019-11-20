@@ -1,3 +1,32 @@
+// UPDATES
+// Since M02, I have added jump and gravity physics, as well as a collision map and enemies.
+// When you collect gems, a gem counter on the bottom left increments. If you collide with
+// the wolves, your life icons decrement. 0 lives will take you to the lose screen. To win
+// collect all of the gems and return to the statue at the start of the game.
+// CONTROLS
+// - start screen - start goes to game, select goes to instructions
+// - instructions screen - start goes to game, select returns to start
+// - game screen - navigate using up, left, and right. pressing start pauses the game
+// - pause screen - press start to return to the game
+// - win screen - press start to return to start screen
+// - lose screen - press start to return to start screen
+// TODO
+// - Mechanics - Jumping) So far I haven't added an upward collision detection while jumping. This is because spacing
+//               the map out and moving around actually seems a lot easier without it. There are some instances
+//               where the player can jump up through platforms, but I have yet to decide if this is a bad thing.
+//               The biggest con to having no upward collision detection is that in some instances, the player will
+//               be prevented from moving left or right if inside of a block.
+//               Boss battle) Once the final gem is retrieved and the player returns to the boss, the boss will begin to
+//               move left or right towards the player's column position. Jumping on top of the boss decrements a boss life,
+//               getting hit from the side decrements a player life. Defeating the boss reveals the door that if the player
+//               walks through - they win!
+// - Graphics - Need to add a parallax background (thinking a looping trees background) and sprite
+//              animations for the wolves and for the player. I also want to add some sprites that instruct
+//              the player at certain points in the game. Ex: 'collect the gems', 'return to statue', 'a door has appeared'
+// - Sound - Need to add sounds. Want 1) a sound for picking up gems, 2) a sound for decrementing a life
+//           3) a background song that loops for general gameplay, 4) a background song that loops for
+//           the boss battle, 5) a sound for a successful attack on the boss (landing on its head)
+
 // Make files
 #include "myLib.h"
 #include "game.h"
@@ -198,7 +227,7 @@ void game() {
         REG_DISPCTL &= ~(BG1_ENABLE);
         goToPause();
 
-    } else if (BUTTON_PRESSED(BUTTON_A)) {
+    } else if (statue.attack) {
 
         // Clear BG1_Enable bit
         REG_DISPCTL &= ~(BG1_ENABLE);

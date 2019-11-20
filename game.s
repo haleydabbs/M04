@@ -308,39 +308,41 @@ initGame:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
-	mov	r4, #3
-	mov	r5, #4
-	mov	r0, r4
+	mov	r5, #3
+	mov	r4, #4
+	mov	r0, r5
 	ldr	r6, .L53
 	mov	r3, #16384
 	ldr	r2, .L53+4
 	ldr	r1, .L53+8
 	mov	lr, pc
 	bx	r6
-	mov	r0, r4
+	mov	r0, r5
 	mov	r3, #256
 	ldr	r2, .L53+12
 	ldr	r1, .L53+16
 	mov	lr, pc
 	bx	r6
-	ldr	r1, .L53+20
-	ldr	r2, .L53+24
-	ldr	r3, .L53+28
-	str	r5, [r1]
-	str	r4, [r2]
+	ldr	r0, .L53+20
+	ldr	r1, .L53+24
+	ldr	r2, .L53+28
+	ldr	r3, .L53+32
+	str	r4, [r0]
+	str	r4, [r1]
+	str	r5, [r2]
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L53+32
-	str	r5, [r3, #124]
+	ldr	r3, .L53+36
+	str	r5, [r3, #92]
 	mov	r5, #128
 	mov	r8, #56
 	mov	r9, #104
-	str	r4, [r3, #92]
-	ldr	r4, .L53+36
+	str	r4, [r3, #124]
+	ldr	r4, .L53+40
 	str	r5, [r3, #68]
 	ldr	r5, [r4]
 	str	r8, [r3, #64]
-	ldr	r8, .L53+40
+	ldr	r8, .L53+44
 	add	r5, r5, r9
 	str	r5, [r8, #4]
 	mov	r5, #464
@@ -348,8 +350,8 @@ initGame:
 	mov	r5, #475136
 	mov	r2, #8
 	mov	r1, #1
-	mov	r0, #32
-	mov	ip, #0
+	mov	ip, #32
+	mov	r0, #0
 	mov	r6, #2
 	mov	r7, #16
 	str	r5, [r8, #8]
@@ -373,18 +375,18 @@ initGame:
 	str	r2, [r3, #116]
 	str	r9, [r3, #4]
 	str	r9, [r3]
-	str	r0, [r8, #20]
-	str	r0, [r8, #24]
-	str	ip, [r8, #28]
-	str	ip, [r8, #32]
-	str	ip, [r8, #48]
-	str	ip, [r8, #44]
+	str	ip, [r8, #20]
+	str	ip, [r8, #24]
+	str	r0, [r8, #28]
+	str	r0, [r8, #32]
+	str	r0, [r8, #48]
+	str	r0, [r8, #44]
 	str	r6, [r8, #52]
 	str	r7, [r3, #100]
 	str	r5, [r3, #96]
 	mov	r5, #5
 	str	r1, [r3, #120]
-	ldr	r3, .L53+44
+	ldr	r3, .L53+48
 	str	r5, [r3, #28]
 	mov	r5, #6
 	str	r5, [r3, #84]
@@ -395,33 +397,33 @@ initGame:
 	mov	r5, #7
 	mov	lr, #144
 	str	r7, [r3, #4]
-	str	r0, [r3, #16]
-	str	r0, [r3, #20]
-	str	r0, [r3]
+	str	ip, [r3, #16]
+	str	ip, [r3, #20]
+	str	ip, [r3]
 	str	r1, [r3, #24]
 	str	r1, [r3, #44]
 	str	r1, [r3, #48]
 	str	r1, [r3, #80]
 	str	r1, [r3, #100]
 	str	r1, [r3, #104]
-	str	ip, [r3, #52]
-	str	r0, [r3, #72]
-	str	r0, [r3, #76]
-	str	ip, [r3, #108]
-	ldr	r3, .L53+48
+	str	r0, [r3, #52]
+	str	ip, [r3, #72]
+	str	ip, [r3, #76]
+	str	r0, [r3, #108]
+	ldr	r3, .L53+52
 	str	r5, [r3, #28]
 	mov	r5, #18
 	str	r2, [r3, #16]
 	str	r2, [r3, #20]
 	str	r2, [r3, #4]
 	str	lr, [r3]
-	ldr	r3, .L53+52
+	ldr	r3, .L53+56
 	str	r2, [r3, #8]
 	str	r2, [r3, #12]
 	str	lr, [r3]
 	str	r2, [r3, #16]
 	str	r5, [r3, #4]
-	ldr	r3, .L53+56
+	ldr	r3, .L53+60
 	str	r1, [r3, #20]
 	str	r2, [r3, #8]
 	str	r2, [r3, #12]
@@ -438,27 +440,28 @@ initGame:
 	mov	r2, #10
 	str	r2, [r3, #40]
 	mov	r2, #192
-	str	ip, [r4]
+	str	r0, [r4]
 	str	r2, [r3, #52]
 	mov	r4, #11
-	ldr	r2, .L53+60
+	ldr	r2, .L53+64
 	str	r1, [r3, #44]
 	str	r1, [r3, #68]
 	str	r1, [r2, #12]
 	mov	r1, #12
 	str	r4, [r3, #64]
-	ldr	r4, .L53+64
+	ldr	r4, .L53+68
 	str	lr, [r2, #16]
-	str	r0, [r2]
-	str	r0, [r2, #4]
-	str	ip, [r2, #40]
+	str	ip, [r2]
+	str	ip, [r2, #4]
+	str	r0, [r2, #40]
+	str	r0, [r2, #44]
 	str	r4, [r2, #24]
 	str	r1, [r2, #8]
 	mov	r2, #352
 	str	lr, [r3]
 	str	lr, [r3, #24]
 	str	lr, [r3, #48]
-	ldr	r3, .L53+68
+	ldr	r3, .L53+72
 	str	r2, [r3]
 	pop	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	bx	lr
@@ -471,6 +474,7 @@ initGame:
 	.word	83886592
 	.word	FinalGameSpritesPal
 	.word	gemsRemaining
+	.word	statueLivesRemaining
 	.word	livesRemaining
 	.word	hideSprites
 	.word	gems
@@ -855,6 +859,78 @@ updatePlayer:
 	.word	-6144
 	.size	updatePlayer, .-updatePlayer
 	.align	2
+	.global	updateStatue
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	updateStatue, %function
+updateStatue:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	push	{r4, r5, lr}
+	ldr	r4, .L157
+	ldr	r3, [r4, #28]
+	cmp	r3, #160
+	sub	sp, sp, #20
+	bgt	.L150
+	ldr	r1, [r4, #4]
+	cmn	r3, r1
+	bmi	.L150
+	ldr	r2, .L157+4
+	ldr	r2, [r2]
+	cmp	r2, #0
+	beq	.L156
+.L150:
+	ldr	r2, .L157+8
+	ldr	r3, .L157+12
+	ldr	r0, [r2]
+	ldr	r1, [r3]
+	ldr	r2, [r4, #24]
+	ldr	r3, [r4, #16]
+	sub	r2, r2, r0
+	sub	r3, r3, r1
+	str	r2, [r4, #28]
+	str	r3, [r4, #20]
+	add	sp, sp, #20
+	@ sp needed
+	pop	{r4, r5, lr}
+	bx	lr
+.L156:
+	ldr	ip, .L157+16
+	add	r0, ip, #16
+	ldm	r0, {r0, r2}
+	ldr	r5, [r4]
+	ldr	lr, [r4, #20]
+	add	r2, r2, r2, lsr #31
+	asr	r2, r2, #1
+	str	r1, [sp, #12]
+	str	r3, [sp, #4]
+	str	r5, [sp, #8]
+	ldr	r3, [ip, #24]
+	ldr	r1, [ip, #12]
+	str	lr, [sp]
+	ldr	r5, .L157+20
+	add	r0, r0, #8
+	mov	lr, pc
+	bx	r5
+	cmp	r0, #0
+	movne	r2, #20
+	movne	r3, #1
+	strne	r2, [r4, #40]
+	strne	r3, [r4, #44]
+	b	.L150
+.L158:
+	.align	2
+.L157:
+	.word	statue
+	.word	gemsRemaining
+	.word	vOff
+	.word	hOff
+	.word	player
+	.word	collision
+	.size	updateStatue, .-updateStatue
+	.align	2
 	.global	updateGame
 	.syntax unified
 	.arm
@@ -865,55 +941,45 @@ updateGame:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, lr}
-	mov	r7, #512
 	bl	updatePlayer
-	ldr	r3, .L162
-	ldr	r0, .L162+4
-	ldr	r2, .L162+8
-	ldr	ip, [r0]
-	ldr	r1, [r3, #24]
-	ldr	r0, [r2]
-	ldr	r2, [r3, #16]
-	ldr	r4, .L162+12
-	sub	r1, r1, ip
-	sub	r2, r2, r0
-	str	r1, [r3, #28]
-	str	r2, [r3, #20]
-	ldr	r5, .L162+16
+	mov	r7, #512
+	bl	updateStatue
+	ldr	r4, .L173
+	ldr	r5, .L173+4
 	add	r6, r4, #128
-.L151:
+.L162:
 	ldr	r3, [r4, #24]
 	cmp	r3, #0
-	beq	.L149
+	beq	.L160
 	mov	r0, r4
 	bl	updateGems.part.0
-.L150:
+.L161:
 	add	r4, r4, #32
 	cmp	r4, r6
-	bne	.L151
-	ldr	r4, .L162+20
+	bne	.L162
+	ldr	r4, .L173+8
 	ldr	r3, [r4, #24]
 	cmp	r3, #0
-	bne	.L152
+	bne	.L163
 	mov	r2, #512
 	ldr	r3, [r4, #28]
 	lsl	r3, r3, #3
 	strh	r2, [r5, r3]	@ movhi
-.L153:
+.L164:
 	ldr	r3, [r4, #80]
 	cmp	r3, #0
-	bne	.L154
+	bne	.L165
 	mov	r2, #512
 	ldr	r3, [r4, #84]
 	lsl	r3, r3, #3
 	strh	r2, [r5, r3]	@ movhi
-.L156:
+.L167:
 	mov	r7, #512
-	ldr	r3, .L162+24
-	ldr	r6, .L162+28
-	ldr	r4, .L162+32
+	ldr	r3, .L173+12
+	ldr	r6, .L173+16
+	ldr	r4, .L173+20
 	add	ip, r3, #72
-.L155:
+.L166:
 	ldr	r2, [r3, #20]
 	cmp	r2, #0
 	ldr	r2, [r3, #16]
@@ -929,28 +995,25 @@ updateGame:
 	strhne	r2, [r1, #2]	@ movhi
 	strhne	r4, [r1, #4]	@ movhi
 	cmp	r3, ip
-	bne	.L155
+	bne	.L166
 	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
-.L149:
+.L160:
 	ldr	r3, [r4, #28]
 	lsl	r3, r3, #3
 	strh	r7, [r5, r3]	@ movhi
-	b	.L150
-.L154:
-	ldr	r0, .L162+36
+	b	.L161
+.L165:
+	ldr	r0, .L173+24
 	bl	updateWolves.part.0
-	b	.L156
-.L152:
+	b	.L167
+.L163:
 	mov	r0, r4
 	bl	updateWolves.part.0
-	b	.L153
-.L163:
+	b	.L164
+.L174:
 	.align	2
-.L162:
-	.word	statue
-	.word	vOff
-	.word	hOff
+.L173:
 	.word	gems
 	.word	shadowOAM
 	.word	wolves
@@ -959,36 +1022,6 @@ updateGame:
 	.word	4136
 	.word	wolves+56
 	.size	updateGame, .-updateGame
-	.align	2
-	.global	updateStatue
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	updateStatue, %function
-updateStatue:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	@ link register save eliminated.
-	ldr	r3, .L165
-	ldr	r2, .L165+4
-	ldr	r0, .L165+8
-	ldr	ip, [r2]
-	ldr	r1, [r3, #24]
-	ldr	r2, [r3, #16]
-	ldr	r0, [r0]
-	sub	r1, r1, ip
-	sub	r2, r2, r0
-	str	r1, [r3, #28]
-	str	r2, [r3, #20]
-	bx	lr
-.L166:
-	.align	2
-.L165:
-	.word	statue
-	.word	vOff
-	.word	hOff
-	.size	updateStatue, .-updateStatue
 	.align	2
 	.global	updateGems
 	.syntax unified
@@ -1003,16 +1036,16 @@ updateGems:
 	ldr	r2, [r0, #24]
 	cmp	r2, #0
 	bne	updateGems.part.0
-.L168:
+.L176:
 	mov	r1, #512
 	ldr	r3, [r0, #28]
-	ldr	r2, .L169
+	ldr	r2, .L177
 	lsl	r3, r3, #3
 	strh	r1, [r2, r3]	@ movhi
 	bx	lr
-.L170:
+.L178:
 	.align	2
-.L169:
+.L177:
 	.word	shadowOAM
 	.size	updateGems, .-updateGems
 	.align	2
@@ -1029,16 +1062,16 @@ updateWolves:
 	ldr	r2, [r0, #24]
 	cmp	r2, #0
 	bne	updateWolves.part.0
-.L172:
+.L180:
 	mov	r1, #512
 	ldr	r3, [r0, #28]
-	ldr	r2, .L173
+	ldr	r2, .L181
 	lsl	r3, r3, #3
 	strh	r1, [r2, r3]	@ movhi
 	bx	lr
-.L174:
+.L182:
 	.align	2
-.L173:
+.L181:
 	.word	shadowOAM
 	.size	updateWolves, .-updateWolves
 	.align	2
@@ -1054,13 +1087,13 @@ updateHearts:
 	ldr	r3, [r0, #20]
 	cmp	r3, #0
 	ldr	r3, [r0, #16]
-	beq	.L176
+	beq	.L184
 	ldr	r2, [r0, #4]
-	ldr	r1, .L182
+	ldr	r1, .L190
 	str	lr, [sp, #-4]!
 	lsl	r2, r2, #23
 	ldrb	lr, [r0]	@ zero_extendqisi2
-	ldr	r0, .L182+4
+	ldr	r0, .L190+4
 	lsl	ip, r3, #3
 	lsr	r2, r2, #23
 	add	r3, r1, r3, lsl #3
@@ -1069,15 +1102,15 @@ updateHearts:
 	strh	r0, [r3, #4]	@ movhi
 	ldr	lr, [sp], #4
 	bx	lr
-.L176:
+.L184:
 	mov	r1, #512
-	ldr	r2, .L182
+	ldr	r2, .L190
 	lsl	r3, r3, #3
 	strh	r1, [r2, r3]	@ movhi
 	bx	lr
-.L183:
+.L191:
 	.align	2
-.L182:
+.L190:
 	.word	shadowOAM
 	.word	4136
 	.size	updateHearts, .-updateHearts
@@ -1092,23 +1125,23 @@ drawPlayer:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
-	ldr	r0, .L185
+	ldr	r0, .L193
 	ldr	r3, [r0, #16]
 	lsl	r3, r3, #23
 	lsr	r3, r3, #23
 	mvn	r3, r3, lsl #17
 	mvn	r3, r3, lsr #17
 	ldr	r1, [r0, #32]
-	ldr	r2, .L185+4
+	ldr	r2, .L193+4
 	ldrb	r0, [r0, #12]	@ zero_extendqisi2
 	lsl	r1, r1, #2
 	strh	r3, [r2, #2]	@ movhi
 	strh	r0, [r2]	@ movhi
 	strh	r1, [r2, #4]	@ movhi
 	bx	lr
-.L186:
+.L194:
 	.align	2
-.L185:
+.L193:
 	.word	player
 	.word	shadowOAM
 	.size	drawPlayer, .-drawPlayer
@@ -1123,10 +1156,10 @@ drawGemCounterIcon:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	mov	ip, #8
-	ldr	r1, .L189
+	ldr	r1, .L197
 	ldr	r2, [r1, #4]
 	ldr	r3, [r1, #28]
-	ldr	r0, .L189+4
+	ldr	r0, .L197+4
 	str	lr, [sp, #-4]!
 	lsl	r2, r2, #23
 	ldrb	lr, [r1]	@ zero_extendqisi2
@@ -1138,9 +1171,9 @@ drawGemCounterIcon:
 	strh	ip, [r3, #4]	@ movhi
 	ldr	lr, [sp], #4
 	bx	lr
-.L190:
+.L198:
 	.align	2
-.L189:
+.L197:
 	.word	gemCounterIcon
 	.word	shadowOAM
 	.size	drawGemCounterIcon, .-drawGemCounterIcon
@@ -1154,11 +1187,11 @@ drawGemNum:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r0, .L193
-	ldr	r3, .L193+4
+	ldr	r0, .L201
+	ldr	r3, .L201+4
 	ldr	r1, [r0, #4]
 	ldr	r2, [r3]
-	ldr	ip, .L193+8
+	ldr	ip, .L201+8
 	ldr	r3, [r0, #16]
 	str	lr, [sp, #-4]!
 	lsl	r1, r1, #23
@@ -1173,9 +1206,9 @@ drawGemNum:
 	strh	r2, [r3, #4]	@ movhi
 	ldr	lr, [sp], #4
 	bx	lr
-.L194:
+.L202:
 	.align	2
-.L193:
+.L201:
 	.word	gemNum
 	.word	gemsRemaining
 	.word	shadowOAM
@@ -1190,21 +1223,21 @@ drawStatue:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r2, .L202
+	ldr	r2, .L210
 	ldr	r1, [r2, #28]
 	cmp	r1, #160
 	ldr	r3, [r2, #8]
-	bgt	.L196
+	bgt	.L204
 	ldr	r0, [r2, #4]
 	cmn	r1, r0
-	bmi	.L196
+	bmi	.L204
 	ldr	r0, [r2, #20]
 	lsl	r0, r0, #23
 	lsr	r0, r0, #23
 	mvn	r0, r0, lsl #17
 	mvn	r0, r0, lsr #17
 	ldr	r2, [r2, #40]
-	ldr	ip, .L202+4
+	ldr	ip, .L210+4
 	lsl	r2, r2, #5
 	str	lr, [sp, #-4]!
 	and	r1, r1, #255
@@ -1216,15 +1249,15 @@ drawStatue:
 	strh	r2, [r3, #4]	@ movhi
 	ldr	lr, [sp], #4
 	bx	lr
-.L196:
+.L204:
 	mov	r1, #512
-	ldr	r2, .L202+4
+	ldr	r2, .L210+4
 	lsl	r3, r3, #3
 	strh	r1, [r2, r3]	@ movhi
 	bx	lr
-.L203:
+.L211:
 	.align	2
-.L202:
+.L210:
 	.word	statue
 	.word	shadowOAM
 	.size	drawStatue, .-drawStatue
@@ -1238,22 +1271,22 @@ drawGame:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r1, .L206
+	ldr	r1, .L214
 	push	{r4, r5, r6, r7, r8, lr}
 	ldr	r3, [r1, #16]
-	ldr	r5, .L206+4
+	ldr	r5, .L214+4
 	and	r3, r3, r5
 	mvn	r3, r3, lsl #17
 	mvn	r3, r3, lsr #17
 	mov	r6, #8
-	ldr	ip, .L206+8
+	ldr	ip, .L214+8
 	ldrb	r7, [r1, #12]	@ zero_extendqisi2
-	ldr	r4, .L206+12
-	ldr	r2, .L206+16
+	ldr	r4, .L214+12
+	ldr	r2, .L214+16
 	ldr	r0, [r1, #32]
 	ldr	r1, [ip, #28]
 	ldr	r2, [r2]
-	ldr	lr, .L206+20
+	ldr	lr, .L214+20
 	strh	r7, [r4]	@ movhi
 	ldrb	r7, [ip]	@ zero_extendqisi2
 	strh	r3, [r4, #2]	@ movhi
@@ -1278,28 +1311,28 @@ drawGame:
 	strh	r0, [r3, #2]	@ movhi
 	strh	r2, [r3, #4]	@ movhi
 	bl	drawStatue
-	ldr	r3, .L206+24
+	ldr	r3, .L214+24
 	mov	lr, pc
 	bx	r3
 	mov	r1, r4
 	mov	r3, #512
 	mov	r2, #117440512
-	ldr	r4, .L206+28
+	ldr	r4, .L214+28
 	mov	r0, #3
 	mov	lr, pc
 	bx	r4
 	mov	r3, #67108864
-	ldr	r2, .L206+32
+	ldr	r2, .L214+32
 	ldrh	r1, [r2]
-	ldr	r2, .L206+36
+	ldr	r2, .L214+36
 	ldrh	r2, [r2]
 	strh	r1, [r3, #20]	@ movhi
 	pop	{r4, r5, r6, r7, r8, lr}
 	strh	r2, [r3, #22]	@ movhi
 	bx	lr
-.L207:
+.L215:
 	.align	2
-.L206:
+.L214:
 	.word	player
 	.word	511
 	.word	gemCounterIcon
@@ -1311,7 +1344,7 @@ drawGame:
 	.word	hOff
 	.word	vOff
 	.size	drawGame, .-drawGame
-	.comm	statue,44,4
+	.comm	statue,52,4
 	.comm	hearts,72,4
 	.comm	gemNum,20,4
 	.comm	wolves,112,4
@@ -1319,6 +1352,7 @@ drawGame:
 	.comm	gemCounterIcon,32,4
 	.comm	gems,128,4
 	.comm	player,56,4
+	.comm	statueLivesRemaining,4,4
 	.comm	livesRemaining,4,4
 	.comm	gemsRemaining,4,4
 	.comm	vOff,4,4

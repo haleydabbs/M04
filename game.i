@@ -1657,15 +1657,18 @@ typedef struct {
     int cvel;
     int rvel;
     int aniState;
+    int attack;
+    int colliding;
 
 } STATUE;
-# 115 "game.h"
+# 117 "game.h"
 int hOff;
 int vOff;
 
 
 int gemsRemaining;
 int livesRemaining;
+int statueLivesRemaining;
 
 
 PLAYER player;
@@ -1714,6 +1717,7 @@ void initGame() {
 
     gemsRemaining = 4;
     livesRemaining = 3;
+    statueLivesRemaining = 4;
 
 
     hideSprites();
@@ -1767,6 +1771,7 @@ void initGame() {
     statue.active = 1;
     statue.OAMpos = 12;
     statue.aniState = 0;
+    statue.attack = 0;
 
 
     vOff = 512 - 160;
@@ -2005,6 +2010,19 @@ void updatePlayer() {
 
 void updateStatue() {
 
+
+
+
+    if ( (statue.screenRow <= 160)
+    && (statue.screenRow + statue.height >= 0)
+    && (gemsRemaining == 0)
+    && collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow, statue.width, statue.height)) {
+
+        statue.aniState = 20;
+        statue.attack = 1;
+
+    }
+# 338 "game.c"
     statue.screenRow = statue.worldRow - vOff;
     statue.screenCol = statue.worldCol - hOff;
 
@@ -2039,6 +2057,7 @@ void updateGems(GEM* g) {
 
             }
 
+
             shadowOAM[g->OAMpos].attr0 = (0xFF & g->screenRow) | (0<<14);
             shadowOAM[g->OAMpos].attr1 = (0x1FF & g->screenCol) | (0<<14);
             shadowOAM[g->OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
@@ -2060,6 +2079,7 @@ void updateWolves(WOLF* w) {
 
 
     if (w->active) {
+
 
         w->aniCounter++;
 
@@ -2101,6 +2121,7 @@ void updateWolves(WOLF* w) {
 
             }
 
+
             w->aniCounter = 0;
         }
 
@@ -2125,6 +2146,8 @@ void updateWolves(WOLF* w) {
 
                     livesRemaining--;
                 }
+
+
 
                 w->colliding = 1;
 
@@ -2155,11 +2178,13 @@ void updateHearts(HEART* h) {
 
     if (h->active) {
 
+
         shadowOAM[h->OAMpos].attr0 = (0xFF & h->worldRow) | (0<<14);
         shadowOAM[h->OAMpos].attr1 = (0x1FF & h->worldCol) | (0<<14);
         shadowOAM[h->OAMpos].attr2 = ((1)*32+(8)) | ((1)<<12) | ((0)<<10);
 
     } else {
+
 
         shadowOAM[h->OAMpos].attr0 = (2<<8);
 
@@ -2228,9 +2253,10 @@ void drawStatue() {
 
     } else {
 
-    shadowOAM[statue.OAMpos].attr0 = (0xFF & statue.screenRow) | (0<<14);
-    shadowOAM[statue.OAMpos].attr1 = (0x1FF & statue.screenCol) | (2<<14);
-    shadowOAM[statue.OAMpos].attr2 = ((statue.aniState)*32+(9)) | ((0)<<12) | ((0)<<10);
+
+        shadowOAM[statue.OAMpos].attr0 = (0xFF & statue.screenRow) | (0<<14);
+        shadowOAM[statue.OAMpos].attr1 = (0x1FF & statue.screenCol) | (2<<14);
+        shadowOAM[statue.OAMpos].attr2 = ((statue.aniState)*32+(9)) | ((0)<<12) | ((0)<<10);
 
     }
 

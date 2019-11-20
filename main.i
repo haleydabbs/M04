@@ -175,15 +175,18 @@ typedef struct {
     int cvel;
     int rvel;
     int aniState;
+    int attack;
+    int colliding;
 
 } STATUE;
-# 115 "game.h"
+# 117 "game.h"
 int hOff;
 int vOff;
 
 
 int gemsRemaining;
 int livesRemaining;
+int statueLivesRemaining;
 
 
 PLAYER player;
@@ -477,7 +480,7 @@ void game() {
         (*(unsigned short *)0x4000000) &= ~((1<<9));
         goToPause();
 
-    } else if ((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+    } else if (statue.attack) {
 
 
         (*(unsigned short *)0x4000000) &= ~((1<<9));

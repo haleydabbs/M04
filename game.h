@@ -94,6 +94,8 @@ typedef struct {
     int cvel;
     int rvel;
     int aniState;
+    int attack;
+    int colliding;
 
 } STATUE;
 
@@ -118,6 +120,7 @@ int vOff;
 // Counters
 int gemsRemaining;
 int livesRemaining;
+int statueLivesRemaining;
 
 // Struct inits
 PLAYER player;
