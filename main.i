@@ -2,7 +2,7 @@
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "main.c"
-
+# 31 "main.c"
 # 1 "myLib.h" 1
 
 
@@ -77,7 +77,7 @@ void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned 
 
 
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
-# 3 "main.c" 2
+# 32 "main.c" 2
 # 1 "game.h" 1
 
 typedef struct {
@@ -219,7 +219,7 @@ void drawPlayer();
 void drawGemCounterIcon();
 void drawGemNum();
 void drawStatue();
-# 4 "main.c" 2
+# 33 "main.c" 2
 # 1 "startBG.h" 1
 # 22 "startBG.h"
 extern const unsigned short startBGTiles[896];
@@ -229,7 +229,7 @@ extern const unsigned short startBGMap[1024];
 
 
 extern const unsigned short startBGPal[256];
-# 5 "main.c" 2
+# 34 "main.c" 2
 # 1 "gameBG.h" 1
 # 22 "gameBG.h"
 extern const unsigned short gameBGTiles[32];
@@ -239,7 +239,7 @@ extern const unsigned short gameBGMap[1024];
 
 
 extern const unsigned short gameBGPal[256];
-# 6 "main.c" 2
+# 35 "main.c" 2
 # 1 "pauseBG.h" 1
 # 22 "pauseBG.h"
 extern const unsigned short pauseBGTiles[928];
@@ -249,7 +249,7 @@ extern const unsigned short pauseBGMap[1024];
 
 
 extern const unsigned short pauseBGPal[256];
-# 7 "main.c" 2
+# 36 "main.c" 2
 # 1 "loseBG.h" 1
 # 22 "loseBG.h"
 extern const unsigned short loseBGTiles[864];
@@ -259,7 +259,7 @@ extern const unsigned short loseBGMap[1024];
 
 
 extern const unsigned short loseBGPal[256];
-# 8 "main.c" 2
+# 37 "main.c" 2
 # 1 "winBG.h" 1
 # 22 "winBG.h"
 extern const unsigned short winBGTiles[848];
@@ -269,7 +269,7 @@ extern const unsigned short winBGMap[1024];
 
 
 extern const unsigned short winBGPal[256];
-# 9 "main.c" 2
+# 38 "main.c" 2
 # 1 "platformsBG.h" 1
 # 22 "platformsBG.h"
 extern const unsigned short platformsBGTiles[1152];
@@ -279,7 +279,7 @@ extern const unsigned short platformsBGMap[2048];
 
 
 extern const unsigned short platformsBGPal[256];
-# 10 "main.c" 2
+# 39 "main.c" 2
 # 1 "InstructionsBG.h" 1
 # 22 "InstructionsBG.h"
 extern const unsigned short InstructionsBGTiles[1056];
@@ -289,7 +289,7 @@ extern const unsigned short InstructionsBGMap[1024];
 
 
 extern const unsigned short InstructionsBGPal[256];
-# 11 "main.c" 2
+# 40 "main.c" 2
 
 
 void initialize();
