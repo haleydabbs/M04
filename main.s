@@ -28,7 +28,7 @@ goToStart:
 	orr	r3, r3, #1024
 	strh	r3, [r4]	@ movhi
 	ldr	r5, .L4
-	mov	r3, #896
+	mov	r3, #7808
 	mov	r0, #3
 	ldr	r2, .L4+4
 	ldr	r1, .L4+8
@@ -115,7 +115,7 @@ initialize:
 	.word	100675584
 	.word	platformsBGMap
 	.word	5124
-	.word	InstructionsBGPal
+	.word	loseBGPal
 	.word	vOff_1
 	.word	hOff_1
 	.size	initialize, .-initialize
@@ -151,21 +151,21 @@ goToInstructions:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	mov	r0, #3
+	mov	r3, #4048
 	ldr	r4, .L16
-	ldr	r3, .L16+4
-	ldr	r2, .L16+8
-	ldr	r1, .L16+12
+	mov	r0, #3
+	ldr	r2, .L16+4
+	ldr	r1, .L16+8
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
-	ldr	r2, .L16+16
+	ldr	r2, .L16+12
 	mov	r0, #3
-	ldr	r1, .L16+20
+	ldr	r1, .L16+16
 	mov	lr, pc
 	bx	r4
 	mov	r2, #1
-	ldr	r3, .L16+24
+	ldr	r3, .L16+20
 	pop	{r4, lr}
 	str	r2, [r3]
 	bx	lr
@@ -173,7 +173,6 @@ goToInstructions:
 	.align	2
 .L16:
 	.word	DMANow
-	.word	10720
 	.word	100679680
 	.word	InstructionsBGTiles
 	.word	100704256
@@ -331,7 +330,7 @@ goToPause:
 	bic	r3, r3, #4096
 	strh	r3, [r4]	@ movhi
 	ldr	r5, .L52
-	mov	r3, #928
+	mov	r3, #3248
 	mov	r0, #3
 	ldr	r2, .L52+4
 	ldr	r1, .L52+8
@@ -408,7 +407,7 @@ goToWin:
 	bic	r3, r3, #4096
 	strh	r3, [r4]	@ movhi
 	ldr	r5, .L63
-	mov	r3, #848
+	mov	r3, #1696
 	mov	r0, #3
 	ldr	r2, .L63+4
 	ldr	r1, .L63+8
@@ -459,7 +458,7 @@ goToLose:
 	bic	r3, r3, #4096
 	strh	r3, [r4]	@ movhi
 	ldr	r5, .L67
-	mov	r3, #864
+	mov	r3, #3056
 	mov	r0, #3
 	ldr	r2, .L67+4
 	ldr	r1, .L67+8
@@ -714,7 +713,7 @@ win:
 	.comm	blocks,160,4
 	.comm	gemCounterIcon,32,4
 	.comm	gems,128,4
-	.comm	player,56,4
+	.comm	player,68,4
 	.comm	statueLivesRemaining,4,4
 	.comm	livesRemaining,4,4
 	.comm	gemsRemaining,4,4

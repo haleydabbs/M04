@@ -28,10 +28,13 @@ void initGame() {
     player.worldRow_FP = player.worldRow * FP_SCALING_FACTOR;
     player.worldCol = (SCREENWIDTH/2) - (player.width/2) + hOff;
     player.aniCounter = 0;
+    player.curFrame = 0;
+    player.numFrames = 5;
     player.aniState = 0;
     player.cvel = 2;
     player.rvel = 0;
     player.rvel_FP = 0;
+    player.jumping = 1;
 
     // Initialize gems that need to be collected
     for (int i = 0; i < GEMCOUNT; i++) {
@@ -219,6 +222,8 @@ void updatePlayer() {
     // Check for collision with item on bottom to see if we need to accelerate downwards
     if (player.rvel >= 0)
     {
+        
+        player.jumping = 1;
 
         // Attempting some complex vertical movement
         if ((vOff > 0) && (player.screenRow + 16 < 60)) { 
@@ -276,6 +281,7 @@ void updatePlayer() {
 
                 // Otherwise if the player isn't jumping, put their rvel back to 0
                 player.rvel_FP = 0;
+                player.jumping = 0;
 
             }
 
@@ -292,8 +298,7 @@ void updatePlayer() {
         // Otherwise we are traveling downwards and need to increase our rvel by acceleration
         // to simulate gravity
         player.rvel_FP += FP_GRAVITY_ACCEL;
-
-        // Put top collision boundary logic here if needed (a future maybe TODO)
+        player.jumping = 1;
 
     }
 
@@ -302,7 +307,40 @@ void updatePlayer() {
 
     // Update player screen row and column coordinates
     player.screenRow = player.worldRow - vOff;
-    player.screenCol = player.worldCol - hOff;    
+    player.screenCol = player.worldCol - hOff;  
+
+    animatePlayer();  
+
+}
+
+// Helper to animate player
+void animatePlayer() {
+
+    player.prevAniState = player.aniState;
+    player.aniState = PLAYERIDLE;
+
+    if (player.aniCounter % 5 == 0) {
+        player.curFrame = (player.curFrame + 1) % player.numFrames;
+    }   
+    
+    if (BUTTON_HELD(BUTTON_LEFT)) {
+        player.aniState = PLAYERLEFT;
+    } if (BUTTON_HELD(BUTTON_RIGHT)) {
+        player.aniState = PLAYERRIGHT;
+    } 
+
+    if (player.jumping) {
+        player.curFrame = 1;
+        player.aniCounter = 0;
+        player.aniState = player.prevAniState;
+    } else if (player.aniState == PLAYERIDLE) {
+        player.curFrame = 0;
+        player.aniCounter = 0;
+        player.aniState = player.prevAniState;
+    } else {
+        player.aniCounter++;
+    }
+
 
 }
 
@@ -321,18 +359,6 @@ void updateStatue() {
         statue.attack = 1;
 
     }
-
-    // If the statue is in attack mode
-    // if (statue.attack) {
-
-
-    //     if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow, statue.width, statue.height)) {
-
-    //         statueLivesRemaining--;
-
-    //     }
-
-    // }
 
     // Update statue screenRow and screenCol
     statue.screenRow = statue.worldRow - vOff;
@@ -372,7 +398,7 @@ void updateGems(GEM* g) {
             // Draw gems here to avoid repetitive looping
             shadowOAM[g->OAMpos].attr0 = (ROWMASK & g->screenRow) | ATTR0_SQUARE;
             shadowOAM[g->OAMpos].attr1 = (COLMASK & g->screenCol) | ATTR1_TINY;
-            shadowOAM[g->OAMpos].attr2 = ATTR2_TILEID(8, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+            shadowOAM[g->OAMpos].attr2 = ATTR2_TILEID(16, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
         }
 
@@ -472,7 +498,7 @@ void updateWolves(WOLF* w) {
             // Draw the wolf here (to avoid unecessary looping)
             shadowOAM[w->OAMpos].attr0 = (ROWMASK & w->screenRow) | ATTR0_SQUARE;
             shadowOAM[w->OAMpos].attr1 = (COLMASK & w->screenCol) | ATTR1_MEDIUM;
-            shadowOAM[w->OAMpos].attr2 = ATTR2_TILEID(4, w->aniFrame) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
+            shadowOAM[w->OAMpos].attr2 = ATTR2_TILEID(12, w->aniFrame) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
 
         }
 
@@ -493,7 +519,7 @@ void updateHearts(HEART* h) {
         // If the heart is still active, draw it
         shadowOAM[h->OAMpos].attr0 = (ROWMASK & h->worldRow) | ATTR0_SQUARE;
         shadowOAM[h->OAMpos].attr1 = (COLMASK & h->worldCol) | ATTR1_TINY;
-        shadowOAM[h->OAMpos].attr2 = ATTR2_TILEID(8, 1) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
+        shadowOAM[h->OAMpos].attr2 = ATTR2_TILEID(16, 1) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
 
     } else {
 
@@ -537,7 +563,7 @@ void drawPlayer() {
 
     shadowOAM[0].attr0 = (ROWMASK & player.screenRow) | ATTR0_SQUARE;
     shadowOAM[0].attr1 = (COLMASK & player.screenCol) | ATTR1_MEDIUM;
-    shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, player.aniFrame) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+    shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, player.curFrame * 4) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
 }
 
@@ -546,7 +572,7 @@ void drawGemCounterIcon() {
 
     shadowOAM[gemCounterIcon.OAMpos].attr0 = (ROWMASK & gemCounterIcon.worldRow) | ATTR0_SQUARE;
     shadowOAM[gemCounterIcon.OAMpos].attr1 = (COLMASK & gemCounterIcon.worldCol) | ATTR1_TINY;
-    shadowOAM[gemCounterIcon.OAMpos].attr2 = ATTR2_TILEID(8, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+    shadowOAM[gemCounterIcon.OAMpos].attr2 = ATTR2_TILEID(16, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
 }
 
@@ -555,7 +581,7 @@ void drawGemNum() {
 
     shadowOAM[gemNum.OAMpos].attr0 = (ROWMASK & gemNum.worldRow) | ATTR0_SQUARE;
     shadowOAM[gemNum.OAMpos].attr1 = (COLMASK & gemNum.worldCol) | ATTR1_TINY;
-    shadowOAM[gemNum.OAMpos].attr2 = ATTR2_TILEID(8, 2 + gemsRemaining) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+    shadowOAM[gemNum.OAMpos].attr2 = ATTR2_TILEID(16, 2 + gemsRemaining) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
 }
 
@@ -572,7 +598,7 @@ void drawStatue() {
         // Otherwise, draw it
         shadowOAM[statue.OAMpos].attr0 = (ROWMASK & statue.screenRow) | ATTR0_SQUARE;
         shadowOAM[statue.OAMpos].attr1 = (COLMASK & statue.screenCol) | ATTR1_MEDIUM;
-        shadowOAM[statue.OAMpos].attr2 = ATTR2_TILEID(9, statue.aniState) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+        shadowOAM[statue.OAMpos].attr2 = ATTR2_TILEID(17, statue.aniState) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
     }
 

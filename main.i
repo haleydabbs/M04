@@ -92,10 +92,13 @@ typedef struct {
     int aniCounter;
     int aniState;
     int prevAniState;
+    int curFrame;
     int aniFrame;
+    int numFrames;
     int rvel_FP;
     int rvel;
     int cvel;
+    int jumping;
 
 } PLAYER;
 
@@ -179,7 +182,7 @@ typedef struct {
     int colliding;
 
 } STATUE;
-# 117 "game.h"
+# 120 "game.h"
 int hOff;
 int vOff;
 
@@ -199,6 +202,7 @@ HEART hearts[3];
 STATUE statue;
 
 
+enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
 
 
 
@@ -213,6 +217,7 @@ void updateGems(GEM*);
 void updateWolves(WOLF*);
 void updateHearts(HEART*);
 void updateStatue();
+void animatePlayer();
 
 void drawGame();
 void drawPlayer();
@@ -222,7 +227,7 @@ void drawStatue();
 # 33 "main.c" 2
 # 1 "startBG.h" 1
 # 22 "startBG.h"
-extern const unsigned short startBGTiles[896];
+extern const unsigned short startBGTiles[7808];
 
 
 extern const unsigned short startBGMap[1024];
@@ -242,7 +247,7 @@ extern const unsigned short gameBGPal[256];
 # 35 "main.c" 2
 # 1 "pauseBG.h" 1
 # 22 "pauseBG.h"
-extern const unsigned short pauseBGTiles[928];
+extern const unsigned short pauseBGTiles[3248];
 
 
 extern const unsigned short pauseBGMap[1024];
@@ -252,7 +257,7 @@ extern const unsigned short pauseBGPal[256];
 # 36 "main.c" 2
 # 1 "loseBG.h" 1
 # 22 "loseBG.h"
-extern const unsigned short loseBGTiles[864];
+extern const unsigned short loseBGTiles[3056];
 
 
 extern const unsigned short loseBGMap[1024];
@@ -262,7 +267,7 @@ extern const unsigned short loseBGPal[256];
 # 37 "main.c" 2
 # 1 "winBG.h" 1
 # 22 "winBG.h"
-extern const unsigned short winBGTiles[848];
+extern const unsigned short winBGTiles[1696];
 
 
 extern const unsigned short winBGMap[1024];
@@ -282,7 +287,7 @@ extern const unsigned short platformsBGPal[256];
 # 39 "main.c" 2
 # 1 "InstructionsBG.h" 1
 # 22 "InstructionsBG.h"
-extern const unsigned short InstructionsBGTiles[10720];
+extern const unsigned short InstructionsBGTiles[4048];
 
 
 extern const unsigned short InstructionsBGMap[1024];
@@ -377,7 +382,7 @@ void initialize() {
     (*(unsigned short *)0x4000000) = 0 | (1<<12);
 
 
-    DMANow(3, InstructionsBGPal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, loseBGPal, ((unsigned short *)0x5000000), 256);
 
 
     vOff_1 = 0;
@@ -394,7 +399,7 @@ void goToStart() {
     (*(unsigned short *)0x4000000) |= (1<<10);
     (*(unsigned short *)0x4000000) &= ~((1<<12));
 
-    DMANow(3, startBGTiles, &((charblock *)0x6000000)[1], 1792 / 2);
+    DMANow(3, startBGTiles, &((charblock *)0x6000000)[1], 15616 / 2);
     DMANow(3, startBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
     (*(volatile unsigned short *)0x04000018) = hOff_1;
@@ -429,7 +434,7 @@ void start() {
 void goToInstructions() {
 
 
-    DMANow(3, InstructionsBGTiles, &((charblock *)0x6000000)[1], 21440 / 2);
+    DMANow(3, InstructionsBGTiles, &((charblock *)0x6000000)[1], 8096 / 2);
     DMANow(3, InstructionsBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
     state = INSTRUCTIONS;
@@ -503,7 +508,7 @@ void goToPause() {
     (*(unsigned short *)0x4000000) &= ~((1<<12));
 
 
-    DMANow(3, pauseBGTiles, &((charblock *)0x6000000)[1], 1856 / 2);
+    DMANow(3, pauseBGTiles, &((charblock *)0x6000000)[1], 6496 / 2);
     DMANow(3, pauseBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
     (*(volatile unsigned short *)0x04000018) = hOff_1;
@@ -531,7 +536,7 @@ void goToWin() {
     (*(unsigned short *)0x4000000) &= ~((1<<12));
 
 
-    DMANow(3, winBGTiles, &((charblock *)0x6000000)[1], 1696 / 2);
+    DMANow(3, winBGTiles, &((charblock *)0x6000000)[1], 3392 / 2);
     DMANow(3, winBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
     (*(volatile unsigned short *)0x04000018) = hOff_1;
@@ -559,7 +564,7 @@ void goToLose() {
     (*(unsigned short *)0x4000000) &= ~((1<<12));
 
 
-    DMANow(3, loseBGTiles, &((charblock *)0x6000000)[1], 1728 / 2);
+    DMANow(3, loseBGTiles, &((charblock *)0x6000000)[1], 6112 / 2);
     DMANow(3, loseBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
     (*(volatile unsigned short *)0x04000018) = hOff_1;

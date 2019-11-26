@@ -1574,10 +1574,13 @@ typedef struct {
     int aniCounter;
     int aniState;
     int prevAniState;
+    int curFrame;
     int aniFrame;
+    int numFrames;
     int rvel_FP;
     int rvel;
     int cvel;
+    int jumping;
 
 } PLAYER;
 
@@ -1661,7 +1664,7 @@ typedef struct {
     int colliding;
 
 } STATUE;
-# 117 "game.h"
+# 120 "game.h"
 int hOff;
 int vOff;
 
@@ -1681,6 +1684,7 @@ HEART hearts[3];
 STATUE statue;
 
 
+enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
 
 
 
@@ -1695,6 +1699,7 @@ void updateGems(GEM*);
 void updateWolves(WOLF*);
 void updateHearts(HEART*);
 void updateStatue();
+void animatePlayer();
 
 void drawGame();
 void drawPlayer();
@@ -1729,10 +1734,13 @@ void initGame() {
     player.worldRow_FP = player.worldRow * 1024;
     player.worldCol = (240/2) - (player.width/2) + hOff;
     player.aniCounter = 0;
+    player.curFrame = 0;
+    player.numFrames = 5;
     player.aniState = 0;
     player.cvel = 2;
     player.rvel = 0;
     player.rvel_FP = 0;
+    player.jumping = 1;
 
 
     for (int i = 0; i < 4; i++) {
@@ -1921,6 +1929,8 @@ void updatePlayer() {
     if (player.rvel >= 0)
     {
 
+        player.jumping = 1;
+
 
         if ((vOff > 0) && (player.screenRow + 16 < 60)) {
             vOff -= player.rvel;
@@ -1977,6 +1987,7 @@ void updatePlayer() {
 
 
                 player.rvel_FP = 0;
+                player.jumping = 0;
 
             }
 
@@ -1993,8 +2004,7 @@ void updatePlayer() {
 
 
         player.rvel_FP += 500;
-
-
+        player.jumping = 1;
 
     }
 
@@ -2004,6 +2014,39 @@ void updatePlayer() {
 
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
+
+    animatePlayer();
+
+}
+
+
+void animatePlayer() {
+
+    player.prevAniState = player.aniState;
+    player.aniState = PLAYERIDLE;
+
+    if (player.aniCounter % 5 == 0) {
+        player.curFrame = (player.curFrame + 1) % player.numFrames;
+    }
+
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+        player.aniState = PLAYERLEFT;
+    } if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+        player.aniState = PLAYERRIGHT;
+    }
+
+    if (player.jumping) {
+        player.curFrame = 1;
+        player.aniCounter = 0;
+        player.aniState = player.prevAniState;
+    } else if (player.aniState == PLAYERIDLE) {
+        player.curFrame = 0;
+        player.aniCounter = 0;
+        player.aniState = player.prevAniState;
+    } else {
+        player.aniCounter++;
+    }
+
 
 }
 
@@ -2022,7 +2065,8 @@ void updateStatue() {
         statue.attack = 1;
 
     }
-# 338 "game.c"
+
+
     statue.screenRow = statue.worldRow - vOff;
     statue.screenCol = statue.worldCol - hOff;
 
@@ -2060,7 +2104,7 @@ void updateGems(GEM* g) {
 
             shadowOAM[g->OAMpos].attr0 = (0xFF & g->screenRow) | (0<<14);
             shadowOAM[g->OAMpos].attr1 = (0x1FF & g->screenCol) | (0<<14);
-            shadowOAM[g->OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
+            shadowOAM[g->OAMpos].attr2 = ((0)*32+(16)) | ((0)<<12) | ((0)<<10);
 
         }
 
@@ -2160,7 +2204,7 @@ void updateWolves(WOLF* w) {
 
             shadowOAM[w->OAMpos].attr0 = (0xFF & w->screenRow) | (0<<14);
             shadowOAM[w->OAMpos].attr1 = (0x1FF & w->screenCol) | (2<<14);
-            shadowOAM[w->OAMpos].attr2 = ((w->aniFrame)*32+(4)) | ((1)<<12) | ((0)<<10);
+            shadowOAM[w->OAMpos].attr2 = ((w->aniFrame)*32+(12)) | ((1)<<12) | ((0)<<10);
 
         }
 
@@ -2181,7 +2225,7 @@ void updateHearts(HEART* h) {
 
         shadowOAM[h->OAMpos].attr0 = (0xFF & h->worldRow) | (0<<14);
         shadowOAM[h->OAMpos].attr1 = (0x1FF & h->worldCol) | (0<<14);
-        shadowOAM[h->OAMpos].attr2 = ((1)*32+(8)) | ((1)<<12) | ((0)<<10);
+        shadowOAM[h->OAMpos].attr2 = ((1)*32+(16)) | ((1)<<12) | ((0)<<10);
 
     } else {
 
@@ -2225,7 +2269,7 @@ void drawPlayer() {
 
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
-    shadowOAM[0].attr2 = ((player.aniFrame)*32+(player.aniState * 4)) | ((0)<<12) | ((0)<<10);
+    shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((0)<<12) | ((0)<<10);
 
 }
 
@@ -2234,7 +2278,7 @@ void drawGemCounterIcon() {
 
     shadowOAM[gemCounterIcon.OAMpos].attr0 = (0xFF & gemCounterIcon.worldRow) | (0<<14);
     shadowOAM[gemCounterIcon.OAMpos].attr1 = (0x1FF & gemCounterIcon.worldCol) | (0<<14);
-    shadowOAM[gemCounterIcon.OAMpos].attr2 = ((0)*32+(8)) | ((0)<<12) | ((0)<<10);
+    shadowOAM[gemCounterIcon.OAMpos].attr2 = ((0)*32+(16)) | ((0)<<12) | ((0)<<10);
 
 }
 
@@ -2243,7 +2287,7 @@ void drawGemNum() {
 
     shadowOAM[gemNum.OAMpos].attr0 = (0xFF & gemNum.worldRow) | (0<<14);
     shadowOAM[gemNum.OAMpos].attr1 = (0x1FF & gemNum.worldCol) | (0<<14);
-    shadowOAM[gemNum.OAMpos].attr2 = ((2 + gemsRemaining)*32+(8)) | ((0)<<12) | ((0)<<10);
+    shadowOAM[gemNum.OAMpos].attr2 = ((2 + gemsRemaining)*32+(16)) | ((0)<<12) | ((0)<<10);
 
 }
 
@@ -2260,7 +2304,7 @@ void drawStatue() {
 
         shadowOAM[statue.OAMpos].attr0 = (0xFF & statue.screenRow) | (0<<14);
         shadowOAM[statue.OAMpos].attr1 = (0x1FF & statue.screenCol) | (2<<14);
-        shadowOAM[statue.OAMpos].attr2 = ((statue.aniState)*32+(9)) | ((0)<<12) | ((0)<<10);
+        shadowOAM[statue.OAMpos].attr2 = ((statue.aniState)*32+(17)) | ((0)<<12) | ((0)<<10);
 
     }
 

@@ -11,10 +11,13 @@ typedef struct {
     int aniCounter;
     int aniState;
     int prevAniState;
+    int curFrame;
     int aniFrame;
+    int numFrames;
     int rvel_FP;
     int rvel;
     int cvel;
+    int jumping;
 
 } PLAYER;
 
@@ -133,6 +136,7 @@ HEART hearts[LIFECOUNT];
 STATUE statue;
 
 // Player state enum
+enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
 
 // Functions
 
@@ -147,6 +151,7 @@ void updateGems(GEM*);
 void updateWolves(WOLF*);
 void updateHearts(HEART*);
 void updateStatue();
+void animatePlayer();
 
 void drawGame();
 void drawPlayer();
