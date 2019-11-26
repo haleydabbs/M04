@@ -37,6 +37,9 @@
 #include "winBG.h"
 #include "platformsBG.h"
 #include "InstructionsBG.h"
+#include "sound.h"
+#include "GameSongLooping.h"
+#include "StartSoundLooping.h"
 
 // Function prototypes
 void initialize();
@@ -72,6 +75,9 @@ int main() {
 
     // Set up the game
     initialize();
+
+    // Play game sound
+    playSoundA(StartSoundLooping, STARTSOUNDLOOPINGLEN, STARTSOUNDLOOPINGFREQ, 1);
 
     while(1) {
 
@@ -111,6 +117,10 @@ int main() {
 
 // Set up the game 
 void initialize() {
+
+    // Set up sounds
+    setupSounds();
+    setupInterrupts();
 
     // BG1 - Game platforms
     REG_BG1CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(6) | BG_SIZE_TALL;
@@ -157,6 +167,10 @@ void start() {
     // Start button pressed, start the game
     if (BUTTON_PRESSED(BUTTON_START)) {
 
+        // Set up gamescreen music
+        stopSound();
+        playSoundA(GameSongLooping, GAMESONGLOOPINGLEN, GAMESONGLOOPINGFREQ, 1);
+
         // Initialize game, then move to game state
         initGame();
         goToGame();
@@ -193,6 +207,10 @@ void instructions() {
     }
     if (BUTTON_PRESSED(BUTTON_START)) {
 
+        // Set up gamescreen music
+        stopSound();
+        playSoundA(GameSongLooping, GAMESONGLOOPINGLEN, GAMESONGLOOPINGFREQ, 1);
+
         // Initialize game, then move to game state
         initGame();
         goToGame();
@@ -203,6 +221,7 @@ void instructions() {
 
 // Sets up game state
 void goToGame() {
+
 
     // Loading start BG tiles in BG 1
     DMANow(3, gameBGTiles, &CHARBLOCK[1], gameBGTilesLen / 2);
@@ -223,17 +242,28 @@ void game() {
     // Start button pressed, start the game
     if (BUTTON_PRESSED(BUTTON_START)) {
         
+        pauseSound();
+
         // Clear BG1_Enable bit
         REG_DISPCTL &= ~(BG1_ENABLE);
         goToPause();
 
     } else if (statue.attack) {
 
+        // Set up music for win screen (currently same as start)
+        stopSound();
+        playSoundA(StartSoundLooping, STARTSOUNDLOOPINGLEN, STARTSOUNDLOOPINGFREQ, 1);
+
         // Clear BG1_Enable bit
         REG_DISPCTL &= ~(BG1_ENABLE);
         goToWin();
 
     } else if (livesRemaining == 0) {
+
+        // Set up music for lose screen (currently same as start)
+        stopSound();
+        playSoundA(StartSoundLooping, STARTSOUNDLOOPINGLEN, STARTSOUNDLOOPINGFREQ, 1);
+
 
         // Clear BG1_Enable bit
         REG_DISPCTL &= ~(BG1_ENABLE);
@@ -266,6 +296,7 @@ void pause() {
     // Start button pressed, return to game
     if (BUTTON_PRESSED(BUTTON_START)) {
 
+        unpauseSound();
         goToGame();
 
     } 

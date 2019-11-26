@@ -2,6 +2,8 @@
 #include "sound.h"
 
 // Include sound files here
+#include "GameSongLooping.h"
+#include "StartSoundLooping.h"
 
 void setupSounds()
 {

@@ -317,6 +317,29 @@ extern const unsigned short InstructionsBGMap[1024];
 
 extern const unsigned short InstructionsBGPal[256];
 # 40 "main.c" 2
+# 1 "sound.h" 1
+SOUND soundA;
+SOUND soundB;
+
+void setupSounds();
+void playSoundA( const unsigned char* sound, int length, int frequency, int loops);
+void playSoundB( const unsigned char* sound, int length, int frequency, int loops);
+
+void setupInterrupts();
+void interruptHandler();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+# 41 "main.c" 2
+# 1 "GameSongLooping.h" 1
+# 20 "GameSongLooping.h"
+extern const unsigned char GameSongLooping[529920];
+# 42 "main.c" 2
+# 1 "StartSoundLooping.h" 1
+# 20 "StartSoundLooping.h"
+extern const unsigned char StartSoundLooping[387175];
+# 43 "main.c" 2
 
 
 void initialize();
@@ -352,6 +375,9 @@ int main() {
 
 
     initialize();
+
+
+    playSoundA(StartSoundLooping, 387175, 11025, 1);
 
     while(1) {
 
@@ -391,6 +417,10 @@ int main() {
 
 
 void initialize() {
+
+
+    setupSounds();
+    setupInterrupts();
 
 
     (*(volatile unsigned short*)0x400000A) = ((0)<<2) | ((6)<<8) | (2<<14);
@@ -438,6 +468,10 @@ void start() {
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
 
 
+        stopSound();
+        playSoundA(GameSongLooping, 529920, 11025, 1);
+
+
         initGame();
         goToGame();
 
@@ -474,6 +508,10 @@ void instructions() {
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
 
 
+        stopSound();
+        playSoundA(GameSongLooping, 529920, 11025, 1);
+
+
         initGame();
         goToGame();
 
@@ -483,6 +521,7 @@ void instructions() {
 
 
 void goToGame() {
+
 
 
     DMANow(3, gameBGTiles, &((charblock *)0x6000000)[1], 20096 / 2);
@@ -503,6 +542,8 @@ void game() {
 
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
 
+        pauseSound();
+
 
         (*(unsigned short *)0x4000000) &= ~((1<<9));
         goToPause();
@@ -510,10 +551,19 @@ void game() {
     } else if (statue.attack) {
 
 
+        stopSound();
+        playSoundA(StartSoundLooping, 387175, 11025, 1);
+
+
         (*(unsigned short *)0x4000000) &= ~((1<<9));
         goToWin();
 
     } else if (livesRemaining == 0) {
+
+
+        stopSound();
+        playSoundA(StartSoundLooping, 387175, 11025, 1);
+
 
 
         (*(unsigned short *)0x4000000) &= ~((1<<9));
@@ -546,6 +596,7 @@ void pause() {
 
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
 
+        unpauseSound();
         goToGame();
 
     }
