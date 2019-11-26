@@ -232,7 +232,7 @@ extern const unsigned short startBGPal[256];
 # 34 "main.c" 2
 # 1 "gameBG.h" 1
 # 22 "gameBG.h"
-extern const unsigned short gameBGTiles[32];
+extern const unsigned short gameBGTiles[10048];
 
 
 extern const unsigned short gameBGMap[1024];
@@ -272,7 +272,7 @@ extern const unsigned short winBGPal[256];
 # 38 "main.c" 2
 # 1 "platformsBG.h" 1
 # 22 "platformsBG.h"
-extern const unsigned short platformsBGTiles[1152];
+extern const unsigned short platformsBGTiles[1264];
 
 
 extern const unsigned short platformsBGMap[2048];
@@ -282,7 +282,7 @@ extern const unsigned short platformsBGPal[256];
 # 39 "main.c" 2
 # 1 "InstructionsBG.h" 1
 # 22 "InstructionsBG.h"
-extern const unsigned short InstructionsBGTiles[6464];
+extern const unsigned short InstructionsBGTiles[10720];
 
 
 extern const unsigned short InstructionsBGMap[1024];
@@ -312,6 +312,10 @@ unsigned short buttons;
 unsigned short oldButtons;
 
 OBJ_ATTR shadowOAM[128];
+
+
+int vOff_1;
+int hOff_1;
 
 
 enum { START, INSTRUCTIONS, GAME, PAUSE, WIN, LOSE};
@@ -362,26 +366,22 @@ int main() {
 void initialize() {
 
 
+    (*(volatile unsigned short*)0x400000A) = ((0)<<2) | ((6)<<8) | (2<<14);
+    DMANow(3, platformsBGTiles, &((charblock *)0x6000000)[0], 2528 / 2);
+    DMANow(3, platformsBGMap, &((screenblock *)0x6000000)[6], 4096 / 2);
 
 
-
-    (*(volatile unsigned short*)0x4000008) = ((0)<<2) | ((6)<<8) | (0<<14);
-
-
-    (*(volatile unsigned short*)0x400000A) = ((1)<<2) | ((14)<<8) | (2<<14);
-    DMANow(3, platformsBGTiles, &((charblock *)0x6000000)[1], 2304 / 2);
-    DMANow(3, platformsBGMap, &((screenblock *)0x6000000)[14], 4096 / 2);
-
-
-    (*(volatile unsigned short*)0x400000C) = ((2)<<2) | ((20)<<8) | (0<<14);
-    DMANow(3, gameBGTiles, &((charblock *)0x6000000)[2], 64 / 2);
-    DMANow(3, gameBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
+    (*(volatile unsigned short*)0x400000C) = ((1)<<2) | ((20)<<8) | (0<<14);
 
 
     (*(unsigned short *)0x4000000) = 0 | (1<<12);
 
 
     DMANow(3, InstructionsBGPal, ((unsigned short *)0x5000000), 256);
+
+
+    vOff_1 = 0;
+    hOff_1 = 0;
 
     goToStart();
 
@@ -391,11 +391,14 @@ void initialize() {
 void goToStart() {
 
 
-    (*(unsigned short *)0x4000000) |= (1<<8);
+    (*(unsigned short *)0x4000000) |= (1<<10);
     (*(unsigned short *)0x4000000) &= ~((1<<12));
 
-    DMANow(3, startBGTiles, &((charblock *)0x6000000)[0], 1792 / 2);
-    DMANow(3, startBGMap, &((screenblock *)0x6000000)[6], 2048 / 2);
+    DMANow(3, startBGTiles, &((charblock *)0x6000000)[1], 1792 / 2);
+    DMANow(3, startBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
+
+    (*(volatile unsigned short *)0x04000018) = hOff_1;
+    (*(volatile unsigned short *)0x0400001A) = vOff_1;
 
     state = START;
 
@@ -406,9 +409,6 @@ void start() {
 
 
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
-
-
-        (*(unsigned short *)0x4000000) &= ~((1<<8));
 
 
         initGame();
@@ -429,8 +429,8 @@ void start() {
 void goToInstructions() {
 
 
-    DMANow(3, InstructionsBGTiles, &((charblock *)0x6000000)[0], 12928 / 2);
-    DMANow(3, InstructionsBGMap, &((screenblock *)0x6000000)[6], 2048 / 2);
+    DMANow(3, InstructionsBGTiles, &((charblock *)0x6000000)[1], 21440 / 2);
+    DMANow(3, InstructionsBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
     state = INSTRUCTIONS;
 
@@ -447,9 +447,6 @@ void instructions() {
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
 
 
-        (*(unsigned short *)0x4000000) &= ~((1<<8));
-
-
         initGame();
         goToGame();
 
@@ -460,6 +457,9 @@ void instructions() {
 
 void goToGame() {
 
+
+    DMANow(3, gameBGTiles, &((charblock *)0x6000000)[1], 20096 / 2);
+    DMANow(3, gameBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
     (*(unsigned short *)0x4000000) |= (1<<9) | (1<<10) | (1<<12);
     state = GAME;
@@ -500,13 +500,14 @@ void game() {
 void goToPause() {
 
 
-
-    (*(unsigned short *)0x4000000) |= (1<<8);
     (*(unsigned short *)0x4000000) &= ~((1<<12));
 
 
-    DMANow(3, pauseBGTiles, &((charblock *)0x6000000)[0], 1856 / 2);
-    DMANow(3, pauseBGMap, &((screenblock *)0x6000000)[6], 2048 / 2);
+    DMANow(3, pauseBGTiles, &((charblock *)0x6000000)[1], 1856 / 2);
+    DMANow(3, pauseBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
+
+    (*(volatile unsigned short *)0x04000018) = hOff_1;
+    (*(volatile unsigned short *)0x0400001A) = vOff_1;
 
     state = PAUSE;
 
@@ -518,8 +519,6 @@ void pause() {
 
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
 
-
-        (*(unsigned short *)0x4000000) &= ~((1<<8));
         goToGame();
 
     }
@@ -529,13 +528,14 @@ void pause() {
 
 void goToWin() {
 
-
-    (*(unsigned short *)0x4000000) |= (1<<8);
     (*(unsigned short *)0x4000000) &= ~((1<<12));
 
 
-    DMANow(3, winBGTiles, &((charblock *)0x6000000)[0], 1696 / 2);
-    DMANow(3, winBGMap, &((screenblock *)0x6000000)[6], 2048 / 2);
+    DMANow(3, winBGTiles, &((charblock *)0x6000000)[1], 1696 / 2);
+    DMANow(3, winBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
+
+    (*(volatile unsigned short *)0x04000018) = hOff_1;
+    (*(volatile unsigned short *)0x0400001A) = vOff_1;
 
     state = WIN;
 
@@ -547,8 +547,6 @@ void win() {
 
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
 
-
-
         goToStart();
 
     }
@@ -558,13 +556,14 @@ void win() {
 
 void goToLose() {
 
-
-    (*(unsigned short *)0x4000000) |= (1<<8);
     (*(unsigned short *)0x4000000) &= ~((1<<12));
 
 
-    DMANow(3, loseBGTiles, &((charblock *)0x6000000)[0], 1728 / 2);
-    DMANow(3, loseBGMap, &((screenblock *)0x6000000)[6], 2048 / 2);
+    DMANow(3, loseBGTiles, &((charblock *)0x6000000)[1], 1728 / 2);
+    DMANow(3, loseBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
+
+    (*(volatile unsigned short *)0x04000018) = hOff_1;
+    (*(volatile unsigned short *)0x0400001A) = vOff_1;
 
     state = LOSE;
 
@@ -575,8 +574,6 @@ void lose() {
 
 
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
-
-
 
         goToStart();
 

@@ -522,9 +522,13 @@ void drawGame() {
     waitForVBlank();
     DMANow(3, shadowOAM, OAM, 128*4);
 
-    // Update offset registers
+    // Update offset registers for platforms
     REG_BG1HOFF = hOff;
     REG_BG1VOFF = vOff;
+
+    // Update offsets for the parallax BG at a slower speed
+    REG_BG2HOFF = hOff >> 2;
+    REG_BG2VOFF = vOff >> 2;
 
 }
 

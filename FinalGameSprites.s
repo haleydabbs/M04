@@ -1420,11 +1420,11 @@ FinalGameSpritesTiles:
 	.short	2986
 	.short	-21855
 	.short	2986
-	.short	-26086
+	.short	6682
 	.short	2986
-	.short	27297
-	.short	2986
-	.short	-21863
+	.short	24993
+	.short	2977
+	.short	6809
 	.short	2986
 	.short	-22085
 	.short	2970
@@ -3515,7 +3515,7 @@ FinalGameSpritesTiles:
 	.short	20864
 	.short	20757
 	.short	20864
-	.short	20753
+	.short	20881
 	.short	20864
 	.short	21777
 	.short	12672
@@ -3530,7 +3530,7 @@ FinalGameSpritesTiles:
 	.short	-32461
 	.short	20757
 	.short	2069
-	.short	4373
+	.short	6421
 	.short	2069
 	.short	4437
 	.short	2069
@@ -5563,7 +5563,7 @@ FinalGameSpritesTiles:
 	.short	20864
 	.short	20757
 	.short	20864
-	.short	20753
+	.short	20881
 	.short	20864
 	.short	21777
 	.short	12672
@@ -5578,7 +5578,7 @@ FinalGameSpritesTiles:
 	.short	-32461
 	.short	20757
 	.short	2069
-	.short	4373
+	.short	6421
 	.short	2069
 	.short	4437
 	.short	2069
@@ -7611,7 +7611,7 @@ FinalGameSpritesTiles:
 	.short	20864
 	.short	20757
 	.short	20864
-	.short	20753
+	.short	20881
 	.short	20864
 	.short	21777
 	.short	12672
@@ -7626,7 +7626,7 @@ FinalGameSpritesTiles:
 	.short	-32461
 	.short	20757
 	.short	2069
-	.short	4373
+	.short	6421
 	.short	2069
 	.short	4437
 	.short	2069
@@ -9659,7 +9659,7 @@ FinalGameSpritesTiles:
 	.short	20864
 	.short	20757
 	.short	20864
-	.short	20753
+	.short	20881
 	.short	20864
 	.short	21777
 	.short	12672
@@ -9674,7 +9674,7 @@ FinalGameSpritesTiles:
 	.short	-32461
 	.short	20757
 	.short	2069
-	.short	4373
+	.short	6421
 	.short	2069
 	.short	4437
 	.short	2069

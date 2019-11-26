@@ -2214,6 +2214,10 @@ void drawGame() {
     (*(volatile unsigned short *)0x04000014) = hOff;
     (*(volatile unsigned short *)0x04000016) = vOff;
 
+
+    (*(volatile unsigned short *)0x04000018) = hOff >> 2;
+    (*(volatile unsigned short *)0x0400001A) = vOff >> 2;
+
 }
 
 

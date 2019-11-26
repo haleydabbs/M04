@@ -1321,18 +1321,30 @@ drawGame:
 	mov	r1, r4
 	mov	r3, #512
 	mov	r2, #117440512
-	ldr	r4, .L214+28
 	mov	r0, #3
+	ldr	r4, .L214+28
 	mov	lr, pc
 	bx	r4
-	mov	r3, #67108864
-	ldr	r2, .L214+32
-	ldrh	r1, [r2]
+	mov	r0, #67108864
+	ldr	r3, .L214+32
+	ldr	r3, [r3]
+	lsl	r2, r3, #16
+	lsr	r2, r2, #16
+	strh	r2, [r0, #20]	@ movhi
 	ldr	r2, .L214+36
-	ldrh	r2, [r2]
-	strh	r1, [r3, #20]	@ movhi
+	ldr	r2, [r2]
+	asr	r3, r3, #2
+	asr	r1, r2, #2
+	lsl	r3, r3, #16
+	lsl	r2, r2, #16
+	lsl	r1, r1, #16
+	lsr	r3, r3, #16
+	lsr	r2, r2, #16
+	lsr	r1, r1, #16
+	strh	r2, [r0, #22]	@ movhi
 	pop	{r4, r5, r6, r7, r8, lr}
-	strh	r2, [r3, #22]	@ movhi
+	strh	r3, [r0, #24]	@ movhi
+	strh	r1, [r0, #26]	@ movhi
 	bx	lr
 .L215:
 	.align	2

@@ -658,8 +658,8 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	4110
-	.short	4115
-	.short	4115
+	.short	4118
+	.short	4119
 	.short	4115
 	.short	0
 	.short	0
@@ -691,18 +691,18 @@ platformsBGMap:
 	.short	4102
 	.short	4113
 	.short	4115
-	.short	4115
-	.short	4115
-	.short	0
-	.short	0
-	.short	0
-	.short	4118
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	4119
 	.short	4120
+	.short	4121
+	.short	0
+	.short	0
+	.short	0
+	.short	4122
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	4123
+	.short	4124
 	.short	0
 	.short	0
 	.short	0
@@ -740,7 +740,7 @@ platformsBGMap:
 	.short	5126
 	.short	5125
 	.short	0
-	.short	4121
+	.short	4125
 	.short	0
 	.short	0
 	.short	0
@@ -754,11 +754,11 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4122
+	.short	4126
 	.short	6160
 	.short	0
 	.short	0
-	.short	4123
+	.short	4127
 	.short	4103
 	.short	7174
 	.short	7174
@@ -790,10 +790,10 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4124
+	.short	4128
 	.short	0
-	.short	4125
-	.short	4126
+	.short	4129
+	.short	4130
 	.short	0
 	.short	0
 	.short	0
@@ -935,8 +935,8 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4125
-	.short	4126
+	.short	4129
+	.short	4130
 	.short	0
 	.short	0
 	.short	0
@@ -982,7 +982,7 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	7184
-	.short	4127
+	.short	4131
 	.short	0
 	.short	0
 	.short	0
@@ -998,8 +998,8 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	4098
-	.short	4128
-	.short	4129
+	.short	4132
+	.short	4133
 	.short	0
 	.short	0
 	.short	0
@@ -1008,8 +1008,8 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4130
-	.short	4131
+	.short	4134
+	.short	4135
 	.short	4111
 	.short	4112
 	.short	0
@@ -1085,7 +1085,7 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	7196
+	.short	7200
 	.short	0
 	.short	0
 	.short	0
@@ -1117,7 +1117,7 @@ platformsBGMap:
 	.short	0
 	.short	4101
 	.short	5125
-	.short	7195
+	.short	7199
 	.short	0
 	.short	0
 	.short	0
@@ -1239,7 +1239,7 @@ platformsBGMap:
 	.short	0
 	.short	4115
 	.short	5134
-	.short	4132
+	.short	4136
 	.short	0
 	.short	0
 	.short	0
@@ -1269,9 +1269,9 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4115
+	.short	4137
 	.short	5134
-	.short	4133
+	.short	4138
 	.short	0
 	.short	0
 	.short	0
@@ -1398,43 +1398,43 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	4115
+	.short	4139
+	.short	4115
+	.short	5134
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	4140
 	.short	4115
 	.short	4115
 	.short	5134
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	5134
-	.short	4130
-	.short	4131
+	.short	4134
+	.short	4135
 	.short	0
 	.short	0
 	.short	0
@@ -1452,7 +1452,7 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4134
+	.short	4141
 	.short	0
 	.short	0
 	.short	0
@@ -1461,7 +1461,7 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4115
+	.short	4142
 	.short	4115
 	.short	4115
 	.short	5137
@@ -1484,7 +1484,7 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4135
+	.short	4143
 	.short	4101
 	.short	5126
 	.short	5126
@@ -1513,7 +1513,7 @@ platformsBGMap:
 	.short	7174
 	.short	7174
 	.short	7173
-	.short	4136
+	.short	4144
 	.short	0
 	.short	0
 	.short	0
@@ -1541,16 +1541,16 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4137
-	.short	4138
+	.short	4145
+	.short	4146
 	.short	0
 	.short	0
 	.short	0
 	.short	0
 	.short	0
 	.short	0
-	.short	4125
-	.short	4126
+	.short	4129
+	.short	4130
 	.short	0
 	.short	0
 	.short	0
@@ -1893,10 +1893,10 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	0
-	.short	4139
-	.short	4140
-	.short	4141
-	.short	4142
+	.short	4147
+	.short	4148
+	.short	4149
+	.short	4150
 	.short	0
 	.short	0
 	.short	0
@@ -1974,136 +1974,136 @@ platformsBGMap:
 	.short	0
 	.short	0
 	.short	4098
-	.short	4143
-	.short	4120
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	4144
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	5126
-	.short	5126
-	.short	5126
-	.short	4145
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	4115
-	.short	4115
-	.short	4146
-	.short	7182
-	.short	4147
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	4115
-	.short	4148
-	.short	4149
-	.short	7182
-	.short	4150
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
 	.short	4151
+	.short	4124
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	4152
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	5126
+	.short	5126
+	.short	5126
 	.short	4153
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	4115
+	.short	4115
+	.short	4154
+	.short	7182
+	.short	4155
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	4115
+	.short	4156
+	.short	4157
+	.short	7182
+	.short	4158
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	4159
+	.short	4160
+	.short	4161
 	.short	7182
 	.short	0
 	.short	0
@@ -2140,7 +2140,7 @@ platformsBGMap:
 	.short	5126
 	.short	5126
 	.short	5126
-	.short	4145
+	.short	4153
 	.short	5124
 	.short	0
 	.short	0
@@ -2170,21 +2170,21 @@ platformsBGMap:
 	.short	4115
 	.short	4115
 	.short	4115
-	.short	4154
-	.short	4155
+	.short	4162
+	.short	4163
 	.short	7182
 	.short	0
 	.short	0
 	.short	4098
-	.short	4128
-	.short	4129
-	.short	4118
+	.short	4132
+	.short	4133
+	.short	4122
 	.short	0
 	.short	0
 	.short	0
 	.short	0
 	.short	4111
-	.short	4156
+	.short	4164
 	.short	0
 	.short	0
 	.short	0
@@ -2231,87 +2231,87 @@ platformsBGMap:
 	.short	5126
 	.short	4115
 	.short	4115
-	.short	4157
-	.short	4158
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4159
-	.short	4115
-	.short	4115
-	.short	4160
-	.short	4161
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4162
-	.short	4163
-	.short	4164
-	.short	4115
+	.short	7191
 	.short	4165
 	.short	4115
 	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
 	.short	4166
-	.short	6194
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
-	.short	4115
 	.short	4115
 	.short	4115
 	.short	4167
+	.short	4168
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4169
+	.short	4170
+	.short	4171
+	.short	4115
+	.short	4172
+	.short	4115
+	.short	4115
+	.short	4173
+	.short	6202
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4115
+	.short	4174
 	.short	4115
 	.short	4115
 	.short	4115
@@ -2326,7 +2326,7 @@ platformsBGMap:
 	.short	4115
 	.short	4115
 	.type	platformsBGTiles, %object
-	.size	platformsBGTiles, 2304
+	.size	platformsBGTiles, 2528
 platformsBGTiles:
 	.short	0
 	.short	0
@@ -2680,6 +2680,70 @@ platformsBGTiles:
 	.short	0
 	.short	0
 	.short	0
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	8806
+	.short	26214
+	.short	8806
+	.short	9830
+	.short	26146
+	.short	8806
+	.short	25122
+	.short	8806
+	.short	25122
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26210
+	.short	26214
+	.short	26210
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	8806
+	.short	26214
+	.short	8742
+	.short	26214
+	.short	8742
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	8742
+	.short	26214
+	.short	8742
+	.short	26214
+	.short	26210
+	.short	26214
+	.short	26146
+	.short	26214
+	.short	26146
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
 	.short	0
 	.short	0
 	.short	0
@@ -2920,6 +2984,22 @@ platformsBGTiles:
 	.short	170
 	.short	3808
 	.short	3754
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	8742
+	.short	26214
+	.short	8742
+	.short	26214
+	.short	26210
+	.short	26214
+	.short	26146
+	.short	26214
+	.short	26146
+	.short	26214
+	.short	26214
+	.short	26214
 	.short	0
 	.short	3808
 	.short	0
@@ -2936,6 +3016,38 @@ platformsBGTiles:
 	.short	0
 	.short	0
 	.short	0
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	25122
+	.short	26214
+	.short	25122
+	.short	8742
+	.short	26214
+	.short	8738
+	.short	26210
+	.short	8738
+	.short	26210
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	8742
+	.short	26214
+	.short	8742
+	.short	8806
+	.short	26210
 	.short	0
 	.short	0
 	.short	0
@@ -2952,6 +3064,22 @@ platformsBGTiles:
 	.short	3754
 	.short	0
 	.short	-4608
+	.short	8742
+	.short	26146
+	.short	8742
+	.short	26146
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
+	.short	26214
 	.short	-24576
 	.short	14
 	.short	-22016
@@ -3304,22 +3432,6 @@ platformsBGTiles:
 	.short	160
 	.short	-8178
 	.short	-7968
-	.short	26214
-	.short	26214
-	.short	26214
-	.short	26214
-	.short	26214
-	.short	26214
-	.short	26214
-	.short	26214
-	.short	26214
-	.short	9830
-	.short	26214
-	.short	9830
-	.short	26214
-	.short	26214
-	.short	26214
-	.short	26214
 	.short	26214
 	.short	26214
 	.short	9830
