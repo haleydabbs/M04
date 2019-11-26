@@ -121,7 +121,7 @@ initialize:
 	.word	gameBGTiles
 	.word	100704256
 	.word	gameBGMap
-	.word	platformsBGPal
+	.word	InstructionsBGPal
 	.size	initialize, .-initialize
 	.align	2
 	.syntax unified
@@ -155,7 +155,7 @@ goToInstructions:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	mov	r3, #1056
+	mov	r3, #6464
 	ldr	r4, .L16
 	mov	r2, #100663296
 	mov	r0, #3

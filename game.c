@@ -533,7 +533,7 @@ void drawPlayer() {
 
     shadowOAM[0].attr0 = (ROWMASK & player.screenRow) | ATTR0_SQUARE;
     shadowOAM[0].attr1 = (COLMASK & player.screenCol) | ATTR1_MEDIUM;
-    shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, 0) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+    shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, player.aniFrame) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
 
 }
 

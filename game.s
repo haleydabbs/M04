@@ -1125,19 +1125,21 @@ drawPlayer:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
-	ldr	r0, .L193
-	ldr	r3, [r0, #16]
+	ldr	r1, .L193
+	ldr	r3, [r1, #16]
 	lsl	r3, r3, #23
 	lsr	r3, r3, #23
 	mvn	r3, r3, lsl #17
 	mvn	r3, r3, lsr #17
-	ldr	r1, [r0, #32]
-	ldr	r2, .L193+4
-	ldrb	r0, [r0, #12]	@ zero_extendqisi2
-	lsl	r1, r1, #2
-	strh	r3, [r2, #2]	@ movhi
-	strh	r0, [r2]	@ movhi
-	strh	r1, [r2, #4]	@ movhi
+	ldr	ip, [r1, #40]
+	ldr	r2, [r1, #32]
+	ldr	r0, .L193+4
+	ldrb	r1, [r1, #12]	@ zero_extendqisi2
+	add	r2, r2, ip, lsl #3
+	lsl	r2, r2, #2
+	strh	r3, [r0, #2]	@ movhi
+	strh	r1, [r0]	@ movhi
+	strh	r2, [r0, #4]	@ movhi
 	bx	lr
 .L194:
 	.align	2
@@ -1272,42 +1274,44 @@ drawGame:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	ldr	r1, .L214
-	push	{r4, r5, r6, r7, r8, lr}
+	ldr	r0, .L214+4
 	ldr	r3, [r1, #16]
-	ldr	r5, .L214+4
-	and	r3, r3, r5
+	and	r3, r3, r0
 	mvn	r3, r3, lsl #17
 	mvn	r3, r3, lsr #17
-	mov	r6, #8
-	ldr	ip, .L214+8
-	ldrb	r7, [r1, #12]	@ zero_extendqisi2
-	ldr	r4, .L214+12
-	ldr	r2, .L214+16
-	ldr	r0, [r1, #32]
-	ldr	r1, [ip, #28]
+	push	{r4, r5, r6, r7, r8, lr}
+	mov	lr, #8
+	ldr	r4, .L214+8
+	ldr	r2, .L214+12
+	ldr	r7, [r1, #40]
 	ldr	r2, [r2]
-	ldr	lr, .L214+20
-	strh	r7, [r4]	@ movhi
-	ldrb	r7, [ip]	@ zero_extendqisi2
+	ldr	r5, .L214+16
 	strh	r3, [r4, #2]	@ movhi
-	ldr	ip, [ip, #4]
+	ldr	r3, [r1, #32]
+	ldrb	r6, [r1, #12]	@ zero_extendqisi2
+	add	r3, r3, r7, lsl #3
+	ldr	r1, [r5, #28]
+	ldr	ip, .L214+20
+	strh	r6, [r4]	@ movhi
+	lsl	r3, r3, #2
+	ldrb	r6, [r5]	@ zero_extendqisi2
+	ldr	r5, [r5, #4]
+	strh	r3, [r4, #4]	@ movhi
 	lsl	r3, r1, #3
-	lsl	r0, r0, #2
-	strh	r0, [r4, #4]	@ movhi
-	strh	r7, [r4, r3]	@ movhi
-	ldr	r0, [lr, #4]
-	ldr	r3, [lr, #16]
-	and	ip, ip, r5
-	ldrb	lr, [lr]	@ zero_extendqisi2
+	strh	r6, [r4, r3]	@ movhi
+	ldr	r3, [ip, #4]
+	and	r5, r5, r0
+	and	r0, r0, r3
+	ldr	r3, [ip, #16]
 	add	r1, r4, r1, lsl #3
+	ldrb	ip, [ip]	@ zero_extendqisi2
 	lsl	r2, r2, #5
-	strh	ip, [r1, #2]	@ movhi
-	strh	r6, [r1, #4]	@ movhi
-	and	r0, r0, r5
-	lsl	r1, r3, #3
+	strh	lr, [r1, #4]	@ movhi
+	strh	r5, [r1, #2]	@ movhi
 	add	r2, r2, #72
+	lsl	r1, r3, #3
 	add	r3, r4, r3, lsl #3
-	strh	lr, [r4, r1]	@ movhi
+	strh	ip, [r4, r1]	@ movhi
 	strh	r0, [r3, #2]	@ movhi
 	strh	r2, [r3, #4]	@ movhi
 	bl	drawStatue
@@ -1335,9 +1339,9 @@ drawGame:
 .L214:
 	.word	player
 	.word	511
-	.word	gemCounterIcon
 	.word	shadowOAM
 	.word	gemsRemaining
+	.word	gemCounterIcon
 	.word	gemNum
 	.word	waitForVBlank
 	.word	DMANow

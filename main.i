@@ -282,7 +282,7 @@ extern const unsigned short platformsBGPal[256];
 # 39 "main.c" 2
 # 1 "InstructionsBG.h" 1
 # 22 "InstructionsBG.h"
-extern const unsigned short InstructionsBGTiles[1056];
+extern const unsigned short InstructionsBGTiles[6464];
 
 
 extern const unsigned short InstructionsBGMap[1024];
@@ -381,7 +381,7 @@ void initialize() {
     (*(unsigned short *)0x4000000) = 0 | (1<<12);
 
 
-    DMANow(3, platformsBGPal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, InstructionsBGPal, ((unsigned short *)0x5000000), 256);
 
     goToStart();
 
@@ -429,7 +429,7 @@ void start() {
 void goToInstructions() {
 
 
-    DMANow(3, InstructionsBGTiles, &((charblock *)0x6000000)[0], 2112 / 2);
+    DMANow(3, InstructionsBGTiles, &((charblock *)0x6000000)[0], 12928 / 2);
     DMANow(3, InstructionsBGMap, &((screenblock *)0x6000000)[6], 2048 / 2);
 
     state = INSTRUCTIONS;

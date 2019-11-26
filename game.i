@@ -2221,7 +2221,7 @@ void drawPlayer() {
 
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
-    shadowOAM[0].attr2 = ((0)*32+(player.aniState * 4)) | ((0)<<12) | ((0)<<10);
+    shadowOAM[0].attr2 = ((player.aniFrame)*32+(player.aniState * 4)) | ((0)<<12) | ((0)<<10);
 
 }
 

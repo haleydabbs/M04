@@ -128,7 +128,7 @@ void initialize() {
     REG_DISPCTL = MODE0 | SPRITE_ENABLE;
 
     // Loading BG palette
-    DMANow(3, platformsBGPal, PALETTE, 256);
+    DMANow(3, InstructionsBGPal, PALETTE, 256);
 
     goToStart();
 
