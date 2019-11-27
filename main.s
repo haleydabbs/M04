@@ -806,7 +806,7 @@ win:
 	.comm	statue,52,4
 	.comm	hearts,72,4
 	.comm	gemNum,20,4
-	.comm	wolves,112,4
+	.comm	wolves,136,4
 	.comm	blocks,160,4
 	.comm	gemCounterIcon,32,4
 	.comm	gems,128,4

@@ -56,10 +56,13 @@ typedef struct {
     int OAMpos;
     int aniCounter;
     int aniState;
+    int prevAniState;
+    int numFrames;
     int aniFrame;
     int cvel;
     int direction;
     int colliding;
+    int aniDelay;
 
 } WOLF;
 
@@ -137,6 +140,9 @@ STATUE statue;
 
 // Player state enum
 enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
+
+// Wolf state enum
+enum{WOLFLEFT, WOLFRIGHT};
 
 // Functions
 

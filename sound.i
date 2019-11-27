@@ -188,7 +188,7 @@ void playSoundB( const unsigned char* sound, int length, int frequency, int loop
         soundB.isPlaying = 1;
         soundB.duration = (((59.727) * length) / frequency);
 
-        soundA.vBlankCount = 0;
+        soundB.vBlankCount = 0;
 
 }
 
@@ -211,21 +211,17 @@ void interruptHandler() {
  if(*(volatile unsigned short*)0x4000202 & 1 << 0) {
   if (soundA.isPlaying) {
 
-
             soundA.vBlankCount++;
 
             if (soundA.vBlankCount > soundA.duration) {
                 if (soundA.loops) {
-
-                    dma[1].cnt = 0;
-                    DMANow(1, soundA.data, (u16*)0x040000A0, (2 << 21) | (3 << 28) | (1 << 25) | (1 << 26));
-                    soundA.vBlankCount = 0;
+                    playSoundA(soundA.data, soundA.length, soundA.frequency, soundA.loops);
                 }
                 else
                 {
                     soundA.isPlaying = 0;
-                    dma[1].cnt &= !((1 << 31));
-                    *(volatile unsigned short*)0x4000102 = (0<<7);
+                    dma[1].cnt = 0;
+                    *(volatile unsigned short*)0x4000102 = 0;
                 }
 
             }
@@ -236,27 +232,24 @@ void interruptHandler() {
 
   if (soundB.isPlaying) {
 
-
             soundB.vBlankCount++;
 
             if (soundB.vBlankCount > soundB.duration) {
                 if (soundB.loops) {
-                    dma[2].cnt = 0;
-                    DMANow(2, soundB.data, (u16*)0x040000A0, (2 << 21) | (3 << 28) | (1 << 25) | (1 << 26));
-                    soundB.vBlankCount = 0;
+                    playSoundB(soundB.data, soundB.length, soundB.frequency, soundB.loops);
                 }
                 else
                 {
                     soundB.isPlaying = 0;
-                    dma[2].cnt &= !((1 << 31));
-                    *(volatile unsigned short*)0x4000106 = (0<<7);
+                    dma[2].cnt = 0;
+                    *(volatile unsigned short*)0x4000106 = 0;
                 }
 
             }
 
   }
 
-  *(volatile unsigned short*)0x4000202 = 1 << 0;
+  *(volatile unsigned short*)0x4000202 = *(volatile unsigned short*)0x4000202;
  }
 
  *(unsigned short*)0x4000208 = 1;

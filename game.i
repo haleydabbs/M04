@@ -1641,10 +1641,13 @@ typedef struct {
     int OAMpos;
     int aniCounter;
     int aniState;
+    int prevAniState;
+    int numFrames;
     int aniFrame;
     int cvel;
     int direction;
     int colliding;
+    int aniDelay;
 
 } WOLF;
 
@@ -1686,7 +1689,7 @@ typedef struct {
     int colliding;
 
 } STATUE;
-# 120 "game.h"
+# 123 "game.h"
 int hOff;
 int vOff;
 
@@ -1707,6 +1710,9 @@ STATUE statue;
 
 
 enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
+
+
+enum{WOLFLEFT, WOLFRIGHT};
 
 
 
@@ -1733,6 +1739,29 @@ void drawStatue();
 # 20 "collisionMap.h"
 extern const unsigned short collisionMapBitmap[131072];
 # 8 "game.c" 2
+# 1 "sound.h" 1
+SOUND soundA;
+SOUND soundB;
+
+void setupSounds();
+void playSoundA( const unsigned char* sound, int length, int frequency, int loops);
+void playSoundB( const unsigned char* sound, int length, int frequency, int loops);
+
+void setupInterrupts();
+void interruptHandler();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+# 9 "game.c" 2
+# 1 "GemCollectSound.h" 1
+# 20 "GemCollectSound.h"
+extern const unsigned char GemCollectSound[4008];
+# 10 "game.c" 2
+# 1 "HurtSound.h" 1
+# 20 "HurtSound.h"
+extern const unsigned char HurtSound[1402];
+# 11 "game.c" 2
 
 
 void initGame() {
@@ -1853,6 +1882,7 @@ void initWolves(WOLF* w, int i) {
     w->cvel = 1;
     w->direction = 1;
     w->colliding = 0;
+    w->numFrames = 4;
 
     if (i == 0) {
 
@@ -2058,9 +2088,18 @@ void animatePlayer() {
     }
 
     if (player.jumping) {
-        player.curFrame = 1;
+        player.curFrame = 2;
         player.aniCounter = 0;
         player.aniState = player.prevAniState;
+
+
+
+        if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+            player.aniState = PLAYERLEFT;
+        } if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+            player.aniState = PLAYERRIGHT;
+        }
+
     } else if (player.aniState == PLAYERIDLE) {
         player.curFrame = 0;
         player.aniCounter = 0;
@@ -2121,6 +2160,9 @@ void updateGems(GEM* g) {
 
                 gemsRemaining--;
 
+
+                playSoundB(GemCollectSound, 4008, 11025, 0);
+
             }
 
 
@@ -2147,15 +2189,26 @@ void updateWolves(WOLF* w) {
     if (w->active) {
 
 
-        w->aniCounter++;
+        w->aniDelay++;
 
 
         w->screenCol = w->worldCol - hOff;
         w->screenRow = w->worldRow - vOff;
 
-        if (w->aniCounter == 1) {
+
+        w->prevAniState = player.aniState;
+
+        if (w->aniCounter % 8 == 0) {
+            w->aniFrame = (w->aniFrame + 1) % w->numFrames;
+        }
+
+        w->aniCounter++;
+
+        if (w->aniDelay == 1) {
 
             if (w->direction == 1) {
+
+                w->aniState = WOLFRIGHT;
 
 
 
@@ -2173,6 +2226,8 @@ void updateWolves(WOLF* w) {
 
             if (w->direction == 0) {
 
+                w->aniState = WOLFLEFT;
+
 
 
                 if ((w->worldCol < 0)
@@ -2188,7 +2243,7 @@ void updateWolves(WOLF* w) {
             }
 
 
-            w->aniCounter = 0;
+            w->aniDelay = 0;
         }
 
 
@@ -2211,6 +2266,9 @@ void updateWolves(WOLF* w) {
 
 
                     livesRemaining--;
+
+
+                    playSoundB(HurtSound, 1402, 11025, 0);
                 }
 
 
@@ -2226,7 +2284,7 @@ void updateWolves(WOLF* w) {
 
             shadowOAM[w->OAMpos].attr0 = (0xFF & w->screenRow) | (0<<14);
             shadowOAM[w->OAMpos].attr1 = (0x1FF & w->screenCol) | (2<<14);
-            shadowOAM[w->OAMpos].attr2 = ((w->aniFrame)*32+(12)) | ((1)<<12) | ((0)<<10);
+            shadowOAM[w->OAMpos].attr2 = ((w->aniFrame * 4)*32+(8 + (4 * w->aniState))) | ((1)<<12) | ((0)<<10);
 
         }
 

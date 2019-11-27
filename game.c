@@ -5,6 +5,9 @@
 #include "FinalGameSprites.h"
 #include "game.h"
 #include "collisionMap.h"
+#include "sound.h"
+#include "GemCollectSound.h"
+#include "HurtSound.h"
 
 // Initialize the game
 void initGame() {
@@ -125,6 +128,7 @@ void initWolves(WOLF* w, int i) {
     w->cvel = 1;
     w->direction = 1;
     w->colliding = 0;
+    w->numFrames = 4;
 
     if (i == 0) {
 
@@ -330,9 +334,18 @@ void animatePlayer() {
     } 
 
     if (player.jumping) {
-        player.curFrame = 1;
+        player.curFrame = 2;
         player.aniCounter = 0;
         player.aniState = player.prevAniState;
+
+        // Check in midair if player is going left or
+        // right to avoid weird backwards jumping effect
+        if (BUTTON_HELD(BUTTON_LEFT)) {
+            player.aniState = PLAYERLEFT;
+        } if (BUTTON_HELD(BUTTON_RIGHT)) {
+            player.aniState = PLAYERRIGHT;
+        } 
+
     } else if (player.aniState == PLAYERIDLE) {
         player.curFrame = 0;
         player.aniCounter = 0;
@@ -393,6 +406,9 @@ void updateGems(GEM* g) {
                 // Decrement gems remaining counter
                 gemsRemaining--;
 
+                // Play gem collected sound
+                playSoundB(GemCollectSound, GEMCOLLECTSOUNDLEN, GEMCOLLECTSOUNDFREQ, 0);
+
             }
 
             // Draw gems here to avoid repetitive looping
@@ -418,16 +434,27 @@ void updateWolves(WOLF* w) {
     // This should be helpful when implementing the cheat to kill wolves
     if (w->active) {
 
-        // Increment anicounter to delay movement
-        w->aniCounter++;
+        // Increment anidelay to delay movement
+        w->aniDelay++;
 
         // First, update screen column and row coordinates
         w->screenCol = w->worldCol - hOff;
         w->screenRow = w->worldRow - vOff;
 
-        if (w->aniCounter == 1) {
+        // ANIMATION STUFF
+        w->prevAniState = player.aniState;
+
+        if (w->aniCounter % 8 == 0) {
+            w->aniFrame = (w->aniFrame + 1) % w->numFrames;
+        }  
+
+        w->aniCounter++;
+
+        if (w->aniDelay == 1) {
             // Detect if the wolf can continue moving in its current direction ( 1 = right, 0 = left)
             if (w->direction == 1) {
+
+                w->aniState = WOLFRIGHT;
 
                 // If the wolf is moving to the right,
                 // If it will extend past the map limit, hit a wall, or go over an empty ledge, flip the direction
@@ -445,6 +472,8 @@ void updateWolves(WOLF* w) {
 
             if (w->direction == 0) {
 
+                w->aniState = WOLFLEFT;
+
                 // If the wolf is moving to the left,
                 // If it will extend past the map limit, hit a wall, or go over empty ledge, flip the direction
                 if ((w->worldCol < 0)
@@ -460,7 +489,7 @@ void updateWolves(WOLF* w) {
             }
 
             // Restart anicounter
-            w->aniCounter = 0;
+            w->aniDelay = 0;
         }
 
         // If wolf's screen coordinates are off the screen, hide it
@@ -483,6 +512,9 @@ void updateWolves(WOLF* w) {
 
                     // Decrement lives remaining counter if there is a collision
                     livesRemaining--;
+
+                    // Play the hurt sound
+                    playSoundB(HurtSound, HURTSOUNDLEN, HURTSOUNDFREQ, 0);
                 }
 
                 // Using this switch variable to prevent collision from instantly
@@ -498,7 +530,7 @@ void updateWolves(WOLF* w) {
             // Draw the wolf here (to avoid unecessary looping)
             shadowOAM[w->OAMpos].attr0 = (ROWMASK & w->screenRow) | ATTR0_SQUARE;
             shadowOAM[w->OAMpos].attr1 = (COLMASK & w->screenCol) | ATTR1_MEDIUM;
-            shadowOAM[w->OAMpos].attr2 = ATTR2_TILEID(12, w->aniFrame) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
+            shadowOAM[w->OAMpos].attr2 = ATTR2_TILEID(8 + (4 * w->aniState), w->aniFrame * 4) | ATTR2_PALROW(1) | ATTR2_PRIORITY(0);
 
         }
 

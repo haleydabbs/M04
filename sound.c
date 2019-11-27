@@ -68,7 +68,7 @@ void playSoundB( const unsigned char* sound, int length, int frequency, int loop
         soundB.isPlaying = 1;
         soundB.duration = ((VBLANK_FREQ * length) / frequency);
         // priority not needed
-        soundA.vBlankCount = 0;
+        soundB.vBlankCount = 0;
 
 }
 
@@ -91,21 +91,17 @@ void interruptHandler() {
 	if(REG_IF & INT_VBLANK) {
 		if (soundA.isPlaying) {
 
-			//TODO 3.2 - Handle soundA playing in the interruptHandler function
             soundA.vBlankCount++;
 			
             if (soundA.vBlankCount > soundA.duration) {
                 if (soundA.loops) {
-                    // See if there's a better way to do this.
-                    dma[1].cnt = 0;
-                    DMANow(1, soundA.data, REG_FIFO_A, DMA_DESTINATION_FIXED | DMA_AT_REFRESH | DMA_REPEAT | DMA_32);
-                    soundA.vBlankCount = 0;
+                    playSoundA(soundA.data, soundA.length, soundA.frequency, soundA.loops);
                 }
                 else
                 {
                     soundA.isPlaying = 0;
-                    dma[1].cnt &= !(DMA_ON);
-                    REG_TM0CNT = TIMER_OFF;
+                    dma[1].cnt = 0;
+                    REG_TM0CNT = 0;
                 }
                 
             }
@@ -116,27 +112,24 @@ void interruptHandler() {
 
 		if (soundB.isPlaying) {
 
-			//TODO 3.3 - Handle soundB playing in the interruptHandler function
             soundB.vBlankCount++;
 			
             if (soundB.vBlankCount > soundB.duration) {
                 if (soundB.loops) {
-                    dma[2].cnt = 0;
-                    DMANow(2, soundB.data, REG_FIFO_A, DMA_DESTINATION_FIXED | DMA_AT_REFRESH | DMA_REPEAT | DMA_32);
-                    soundB.vBlankCount = 0;
+                    playSoundB(soundB.data, soundB.length, soundB.frequency, soundB.loops);
                 }
                 else
                 {
                     soundB.isPlaying = 0;
-                    dma[2].cnt &= !(DMA_ON);
-                    REG_TM1CNT = TIMER_OFF;
+                    dma[2].cnt = 0;
+                    REG_TM1CNT = 0;
                 }
                 
             }
 
 		}		
 
-		REG_IF = INT_VBLANK; 
+		REG_IF = REG_IF; 
 	}
 
 	REG_IME = 1;

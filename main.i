@@ -159,10 +159,13 @@ typedef struct {
     int OAMpos;
     int aniCounter;
     int aniState;
+    int prevAniState;
+    int numFrames;
     int aniFrame;
     int cvel;
     int direction;
     int colliding;
+    int aniDelay;
 
 } WOLF;
 
@@ -204,7 +207,7 @@ typedef struct {
     int colliding;
 
 } STATUE;
-# 120 "game.h"
+# 123 "game.h"
 int hOff;
 int vOff;
 
@@ -225,6 +228,9 @@ STATUE statue;
 
 
 enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
+
+
+enum{WOLFLEFT, WOLFRIGHT};
 
 
 
