@@ -18,6 +18,7 @@ typedef struct {
     int rvel;
     int cvel;
     int jumping;
+    int cheatOn;
 
 } PLAYER;
 
@@ -139,7 +140,7 @@ HEART hearts[LIFECOUNT];
 STATUE statue;
 
 // Player state enum
-enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
+enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 
 // Wolf state enum
 enum{WOLFLEFT, WOLFRIGHT};

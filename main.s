@@ -84,7 +84,7 @@ initialize:
 	mov	r2, #34304
 	ldr	r4, .L8+8
 	strh	r2, [r5, #10]	@ movhi
-	mov	r3, #1264
+	mov	r3, #2144
 	mov	r2, #100663296
 	mov	r0, #3
 	ldr	r1, .L8+12
@@ -159,7 +159,7 @@ goToInstructions:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	mov	r3, #4048
+	mov	r3, #2128
 	ldr	r4, .L16
 	mov	r0, #3
 	ldr	r2, .L16+4
@@ -810,7 +810,7 @@ win:
 	.comm	blocks,160,4
 	.comm	gemCounterIcon,32,4
 	.comm	gems,128,4
-	.comm	player,68,4
+	.comm	player,72,4
 	.comm	statueLivesRemaining,4,4
 	.comm	livesRemaining,4,4
 	.comm	gemsRemaining,4,4

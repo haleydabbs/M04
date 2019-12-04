@@ -1603,6 +1603,7 @@ typedef struct {
     int rvel;
     int cvel;
     int jumping;
+    int cheatOn;
 
 } PLAYER;
 
@@ -1689,7 +1690,7 @@ typedef struct {
     int colliding;
 
 } STATUE;
-# 123 "game.h"
+# 124 "game.h"
 int hOff;
 int vOff;
 
@@ -1709,7 +1710,7 @@ HEART hearts[3];
 STATUE statue;
 
 
-enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
+enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 
 
 enum{WOLFLEFT, WOLFRIGHT};
@@ -1944,7 +1945,7 @@ void updatePlayer() {
     player.rvel = player.rvel_FP / 1024;
 
 
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5))) && !(player.cheatOn)) {
         if ( (player.worldCol + 8 > 0)
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + 8 - player.cvel))])
         && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + 8 - player.cvel))])) {
@@ -1960,7 +1961,7 @@ void updatePlayer() {
     }
 
 
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4))) && !(player.cheatOn)) {
         if (player.worldCol + 8 < 240
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + player.width - 9 + player.cvel))])
         && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 9 + player.cvel))])) {
@@ -2074,6 +2075,7 @@ void updatePlayer() {
 
 void animatePlayer() {
 
+
     player.prevAniState = player.aniState;
     player.aniState = PLAYERIDLE;
 
@@ -2085,6 +2087,13 @@ void animatePlayer() {
         player.aniState = PLAYERLEFT;
     } if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
         player.aniState = PLAYERRIGHT;
+    } if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
+        player.aniState = PLAYERDOWN;
+
+        player.cheatOn = 1;
+    } else {
+
+        player.cheatOn = 0;
     }
 
     if (player.jumping) {
@@ -2102,6 +2111,10 @@ void animatePlayer() {
 
     } else if (player.aniState == PLAYERIDLE) {
         player.curFrame = 0;
+        player.aniCounter = 0;
+        player.aniState = player.prevAniState;
+    } else if (player.aniState == PLAYERDOWN) {
+        player.curFrame = 5;
         player.aniCounter = 0;
         player.aniState = player.prevAniState;
     } else {
@@ -2202,6 +2215,7 @@ void updateWolves(WOLF* w) {
             w->aniFrame = (w->aniFrame + 1) % w->numFrames;
         }
 
+
         w->aniCounter++;
 
         if (w->aniDelay == 1) {
@@ -2258,7 +2272,7 @@ void updateWolves(WOLF* w) {
             if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, w->screenCol, w->screenRow + w->height/2, w->width, w->height)) {
 
 
-                if (!w->colliding) {
+                if (!(w->colliding) && !(player.cheatOn)) {
 
                     if ((3 -livesRemaining >= 0) && (3 - livesRemaining < 3)) {
                         hearts[3 - livesRemaining].active = 0;
@@ -2349,7 +2363,7 @@ void drawPlayer() {
 
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
-    shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((0)<<12) | ((0)<<10);
+    shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((2)<<12) | ((0)<<10);
 
 }
 

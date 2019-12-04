@@ -190,7 +190,7 @@ void updatePlayer() {
     player.rvel = player.rvel_FP / FP_SCALING_FACTOR;
 
     // Moving left logic
-    if (BUTTON_HELD(BUTTON_LEFT)) {
+    if (BUTTON_HELD(BUTTON_LEFT) && !(player.cheatOn)) {
         if ( (player.worldCol + 8 > 0)
         && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow, MAPWIDTH)])
         && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
@@ -206,7 +206,7 @@ void updatePlayer() {
     }
 
     // Moving right logic
-    if (BUTTON_HELD(BUTTON_RIGHT)) {
+    if (BUTTON_HELD(BUTTON_RIGHT) && !(player.cheatOn)) {
         if (player.worldCol + 8 < SCREENWIDTH
         && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow, MAPWIDTH)])
         && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
@@ -229,7 +229,7 @@ void updatePlayer() {
         
         player.jumping = 1;
 
-        // Attempting some complex vertical movement
+        // Complex vertical movement
         if ((vOff > 0) && (player.screenRow + 16 < 60)) { 
             vOff -= player.rvel;
         }
@@ -320,6 +320,7 @@ void updatePlayer() {
 // Helper to animate player
 void animatePlayer() {
 
+    // Set up prevAnistate, and set default player state to idle (when nothing is pressed)
     player.prevAniState = player.aniState;
     player.aniState = PLAYERIDLE;
 
@@ -331,7 +332,14 @@ void animatePlayer() {
         player.aniState = PLAYERLEFT;
     } if (BUTTON_HELD(BUTTON_RIGHT)) {
         player.aniState = PLAYERRIGHT;
-    } 
+    } if (BUTTON_HELD(BUTTON_DOWN)) {
+        player.aniState = PLAYERDOWN;
+        // Turn cheat variable on if you are holding down
+        player.cheatOn = 1;
+    } else {
+        // Turn off the cheat once down is released
+        player.cheatOn = 0;
+    }
 
     if (player.jumping) {
         player.curFrame = 2;
@@ -348,6 +356,10 @@ void animatePlayer() {
 
     } else if (player.aniState == PLAYERIDLE) {
         player.curFrame = 0;
+        player.aniCounter = 0;
+        player.aniState = player.prevAniState;
+    } else if (player.aniState == PLAYERDOWN) {
+        player.curFrame = 5;
         player.aniCounter = 0;
         player.aniState = player.prevAniState;
     } else {
@@ -448,6 +460,7 @@ void updateWolves(WOLF* w) {
             w->aniFrame = (w->aniFrame + 1) % w->numFrames;
         }  
 
+        // Increment aniCounter to increment animation frame
         w->aniCounter++;
 
         if (w->aniDelay == 1) {
@@ -504,7 +517,7 @@ void updateWolves(WOLF* w) {
             if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, w->screenCol, w->screenRow + w->height/2, w->width, w->height)) {
 
                 
-                if (!w->colliding) {
+                if (!(w->colliding) && !(player.cheatOn)) {
                     // Turn off the leftmost heart icon
                     if ((LIFECOUNT-livesRemaining >= 0) && (LIFECOUNT - livesRemaining < 3)) {
                         hearts[LIFECOUNT - livesRemaining].active = 0;
@@ -595,7 +608,7 @@ void drawPlayer() {
 
     shadowOAM[0].attr0 = (ROWMASK & player.screenRow) | ATTR0_SQUARE;
     shadowOAM[0].attr1 = (COLMASK & player.screenCol) | ATTR1_MEDIUM;
-    shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, player.curFrame * 4) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+    shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, player.curFrame * 4) | ATTR2_PALROW(2) | ATTR2_PRIORITY(0);
 
 }
 

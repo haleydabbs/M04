@@ -35,10 +35,10 @@ loseBGPal:
 	.short	0
 	.short	0
 	.short	31775
-	.short	3352
+	.short	11889
 	.short	9447
 	.short	20183
-	.short	14599
+	.short	4292
 	.short	15856
 	.short	7300
 	.short	12651

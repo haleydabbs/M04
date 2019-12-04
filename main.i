@@ -121,6 +121,7 @@ typedef struct {
     int rvel;
     int cvel;
     int jumping;
+    int cheatOn;
 
 } PLAYER;
 
@@ -207,7 +208,7 @@ typedef struct {
     int colliding;
 
 } STATUE;
-# 123 "game.h"
+# 124 "game.h"
 int hOff;
 int vOff;
 
@@ -227,7 +228,7 @@ HEART hearts[3];
 STATUE statue;
 
 
-enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE};
+enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 
 
 enum{WOLFLEFT, WOLFRIGHT};
@@ -305,7 +306,7 @@ extern const unsigned short winBGPal[256];
 # 38 "main.c" 2
 # 1 "platformsBG.h" 1
 # 22 "platformsBG.h"
-extern const unsigned short platformsBGTiles[1264];
+extern const unsigned short platformsBGTiles[2144];
 
 
 extern const unsigned short platformsBGMap[2048];
@@ -315,7 +316,7 @@ extern const unsigned short platformsBGPal[256];
 # 39 "main.c" 2
 # 1 "InstructionsBG.h" 1
 # 22 "InstructionsBG.h"
-extern const unsigned short InstructionsBGTiles[4048];
+extern const unsigned short InstructionsBGTiles[2128];
 
 
 extern const unsigned short InstructionsBGMap[1024];
@@ -430,7 +431,7 @@ void initialize() {
 
 
     (*(volatile unsigned short*)0x400000A) = ((0)<<2) | ((6)<<8) | (2<<14);
-    DMANow(3, platformsBGTiles, &((charblock *)0x6000000)[0], 2528 / 2);
+    DMANow(3, platformsBGTiles, &((charblock *)0x6000000)[0], 4288 / 2);
     DMANow(3, platformsBGMap, &((screenblock *)0x6000000)[6], 4096 / 2);
 
 
@@ -496,7 +497,7 @@ void start() {
 void goToInstructions() {
 
 
-    DMANow(3, InstructionsBGTiles, &((charblock *)0x6000000)[1], 8096 / 2);
+    DMANow(3, InstructionsBGTiles, &((charblock *)0x6000000)[1], 4256 / 2);
     DMANow(3, InstructionsBGMap, &((screenblock *)0x6000000)[20], 2048 / 2);
 
     state = INSTRUCTIONS;
