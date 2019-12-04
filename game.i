@@ -1690,7 +1690,19 @@ typedef struct {
     int colliding;
 
 } STATUE;
-# 124 "game.h"
+
+typedef struct {
+
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+    int worldCol;
+    int worldRow;
+    int spriteSheetrow;
+
+} TEXTBUBBLE;
+# 136 "game.h"
 int hOff;
 int vOff;
 
@@ -1698,6 +1710,7 @@ int vOff;
 int gemsRemaining;
 int livesRemaining;
 int statueLivesRemaining;
+int gameState;
 
 
 PLAYER player;
@@ -1708,12 +1721,16 @@ WOLF wolves[2];
 GEMNUM gemNum;
 HEART hearts[3];
 STATUE statue;
+TEXTBUBBLE textBubble;
 
 
 enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 
 
 enum{WOLFLEFT, WOLFRIGHT};
+
+
+enum{PLAY, CUTSCENE1, CUTSCENE2};
 
 
 
@@ -1729,6 +1746,7 @@ void updateWolves(WOLF*);
 void updateHearts(HEART*);
 void updateStatue();
 void animatePlayer();
+void updateText();
 
 void drawGame();
 void drawPlayer();
@@ -1834,6 +1852,18 @@ void initGame() {
     statue.attack = 0;
 
 
+    textBubble.width = 64;
+    textBubble.height = 32;
+    textBubble.worldCol = 240/2 + 40 - textBubble.width/2;
+    textBubble.worldRow = 160 - 90 - textBubble.height;
+    textBubble.active = 1;
+    textBubble.OAMpos = 13;
+    textBubble.spriteSheetrow = 0;
+
+
+    gameState = CUTSCENE1;
+
+
     vOff = 512 - 160;
     hOff = 0;
 
@@ -1915,6 +1945,7 @@ void initHearts(HEART* h, int i) {
 void updateGame() {
 
 
+
     updatePlayer();
 
 
@@ -1935,6 +1966,9 @@ void updateGame() {
         updateHearts(&hearts[i]);
     }
 
+
+    updateText();
+
 }
 
 
@@ -1945,7 +1979,7 @@ void updatePlayer() {
     player.rvel = player.rvel_FP / 1024;
 
 
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5))) && !(player.cheatOn)) {
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5))) && !(player.cheatOn) && gameState == PLAY) {
         if ( (player.worldCol + 8 > 0)
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + 8 - player.cvel))])
         && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + 8 - player.cvel))])) {
@@ -1961,7 +1995,7 @@ void updatePlayer() {
     }
 
 
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4))) && !(player.cheatOn)) {
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4))) && !(player.cheatOn) && gameState == PLAY) {
         if (player.worldCol + 8 < 240
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + player.width - 9 + player.cvel))])
         && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 9 + player.cvel))])) {
@@ -2026,7 +2060,7 @@ void updatePlayer() {
 
 
 
-            if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6))))) {
+            if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6)))) && gameState == PLAY) {
 
 
                 if (player.worldRow > 0) {
@@ -2083,17 +2117,21 @@ void animatePlayer() {
         player.curFrame = (player.curFrame + 1) % player.numFrames;
     }
 
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
-        player.aniState = PLAYERLEFT;
-    } if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        player.aniState = PLAYERRIGHT;
-    } if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
-        player.aniState = PLAYERDOWN;
+    if (gameState == PLAY) {
 
-        player.cheatOn = 1;
-    } else {
+        if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+            player.aniState = PLAYERLEFT;
+        } if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+            player.aniState = PLAYERRIGHT;
+        } if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
+            player.aniState = PLAYERDOWN;
 
-        player.cheatOn = 0;
+            player.cheatOn = 1;
+        } else {
+
+            player.cheatOn = 0;
+        }
+
     }
 
     if (player.jumping) {
@@ -2135,8 +2173,9 @@ void updateStatue() {
     && (gemsRemaining == 0)
     && collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow, statue.width, statue.height)) {
 
-        statue.aniState = 20;
-        statue.attack = 1;
+
+        gameState = CUTSCENE2;
+
 
     }
 
@@ -2325,6 +2364,58 @@ void updateHearts(HEART* h) {
 
 
         shadowOAM[h->OAMpos].attr0 = (2<<8);
+
+    }
+
+}
+
+
+void updateText() {
+
+
+    if ((gameState == CUTSCENE1) || (gameState == CUTSCENE2)) {
+
+
+        if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+
+            textBubble.spriteSheetrow++;
+
+        }
+
+
+        if ((textBubble.spriteSheetrow == 2) && (gameState == CUTSCENE1)) {
+
+            textBubble.active = 0;
+            gameState = PLAY;
+
+        }
+
+        else if (textBubble.spriteSheetrow == 4 && gameState == CUTSCENE2) {
+
+            textBubble.active = 0;
+            gameState = PLAY;
+
+        }
+
+        else {
+
+            textBubble.active = 1;
+
+        }
+
+    }
+
+
+    if (textBubble.active) {
+
+        shadowOAM[textBubble.OAMpos].attr0 = (0xFF & textBubble.worldRow) | (1<<14);
+        shadowOAM[textBubble.OAMpos].attr1 = (0x1FF & textBubble.worldCol) | (3<<14);
+        shadowOAM[textBubble.OAMpos].attr2 = ((textBubble.spriteSheetrow * 4)*32+(21)) | ((0)<<12) | ((0)<<10);
+
+    } else {
+
+
+        shadowOAM[textBubble.OAMpos].attr0 = (2<<8);
 
     }
 

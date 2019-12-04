@@ -208,7 +208,19 @@ typedef struct {
     int colliding;
 
 } STATUE;
-# 124 "game.h"
+
+typedef struct {
+
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+    int worldCol;
+    int worldRow;
+    int spriteSheetrow;
+
+} TEXTBUBBLE;
+# 136 "game.h"
 int hOff;
 int vOff;
 
@@ -216,6 +228,7 @@ int vOff;
 int gemsRemaining;
 int livesRemaining;
 int statueLivesRemaining;
+int gameState;
 
 
 PLAYER player;
@@ -226,12 +239,16 @@ WOLF wolves[2];
 GEMNUM gemNum;
 HEART hearts[3];
 STATUE statue;
+TEXTBUBBLE textBubble;
 
 
 enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 
 
 enum{WOLFLEFT, WOLFRIGHT};
+
+
+enum{PLAY, CUTSCENE1, CUTSCENE2};
 
 
 
@@ -247,6 +264,7 @@ void updateWolves(WOLF*);
 void updateHearts(HEART*);
 void updateStatue();
 void animatePlayer();
+void updateText();
 
 void drawGame();
 void drawPlayer();

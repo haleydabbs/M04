@@ -106,6 +106,18 @@ typedef struct {
 
 } STATUE;
 
+typedef struct {
+
+    int width;
+    int height;
+    int OAMpos;
+    int active;
+    int worldCol;
+    int worldRow;
+    int spriteSheetrow;
+
+} TEXTBUBBLE;
+
 // Variables
 
 // Constants
@@ -128,6 +140,7 @@ int vOff;
 int gemsRemaining;
 int livesRemaining;
 int statueLivesRemaining;
+int gameState;
 
 // Struct inits
 PLAYER player;
@@ -138,12 +151,16 @@ WOLF wolves[WOLF_COUNT];
 GEMNUM gemNum;
 HEART hearts[LIFECOUNT];
 STATUE statue;
+TEXTBUBBLE textBubble;
 
 // Player state enum
 enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 
 // Wolf state enum
 enum{WOLFLEFT, WOLFRIGHT};
+
+// Game state enum
+enum{PLAY, CUTSCENE1, CUTSCENE2};
 
 // Functions
 
@@ -159,6 +176,7 @@ void updateWolves(WOLF*);
 void updateHearts(HEART*);
 void updateStatue();
 void animatePlayer();
+void updateText();
 
 void drawGame();
 void drawPlayer();

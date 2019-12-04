@@ -78,6 +78,18 @@ void initGame() {
     statue.aniState = 0;
     statue.attack = 0;
 
+    // Initialize the text bubble
+    textBubble.width = 64;
+    textBubble.height = 32;
+    textBubble.worldCol = SCREENWIDTH/2 + 40 - textBubble.width/2;
+    textBubble.worldRow = SCREENHEIGHT - 90 - textBubble.height;
+    textBubble.active = 1;
+    textBubble.OAMpos = 13;
+    textBubble.spriteSheetrow = 0;
+
+    // Set gameState to cutscene
+    gameState = CUTSCENE1;
+
     // Initialize screen offsets
     vOff = MAPHEIGHT - SCREENHEIGHT;
     hOff = 0;
@@ -159,6 +171,7 @@ void initHearts(HEART* h, int i) {
 // Update the game
 void updateGame() {
 
+
     // Update player sprite
     updatePlayer();
 
@@ -180,6 +193,9 @@ void updateGame() {
         updateHearts(&hearts[i]);
     }
 
+    // Update textBubble
+    updateText();
+
 }
 
 // Helper to update player
@@ -190,7 +206,7 @@ void updatePlayer() {
     player.rvel = player.rvel_FP / FP_SCALING_FACTOR;
 
     // Moving left logic
-    if (BUTTON_HELD(BUTTON_LEFT) && !(player.cheatOn)) {
+    if (BUTTON_HELD(BUTTON_LEFT) && !(player.cheatOn) && gameState == PLAY) {
         if ( (player.worldCol + 8 > 0)
         && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow, MAPWIDTH)])
         && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
@@ -206,7 +222,7 @@ void updatePlayer() {
     }
 
     // Moving right logic
-    if (BUTTON_HELD(BUTTON_RIGHT) && !(player.cheatOn)) {
+    if (BUTTON_HELD(BUTTON_RIGHT) && !(player.cheatOn) && gameState == PLAY) {
         if (player.worldCol + 8 < SCREENWIDTH
         && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow, MAPWIDTH)])
         && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
@@ -271,7 +287,7 @@ void updatePlayer() {
 
             // If the player is standing on the ground, they can jump
             // which will increase their velocity instantly to the max
-            if (BUTTON_PRESSED(BUTTON_UP)) {
+            if (BUTTON_PRESSED(BUTTON_UP) && gameState == PLAY) {
 
                 // Stop player from jumping if at top of screen
                 if (player.worldRow > 0) {
@@ -328,17 +344,21 @@ void animatePlayer() {
         player.curFrame = (player.curFrame + 1) % player.numFrames;
     }   
     
-    if (BUTTON_HELD(BUTTON_LEFT)) {
-        player.aniState = PLAYERLEFT;
-    } if (BUTTON_HELD(BUTTON_RIGHT)) {
-        player.aniState = PLAYERRIGHT;
-    } if (BUTTON_HELD(BUTTON_DOWN)) {
-        player.aniState = PLAYERDOWN;
-        // Turn cheat variable on if you are holding down
-        player.cheatOn = 1;
-    } else {
-        // Turn off the cheat once down is released
-        player.cheatOn = 0;
+    if (gameState == PLAY) {
+
+        if (BUTTON_HELD(BUTTON_LEFT)) {
+            player.aniState = PLAYERLEFT;
+        } if (BUTTON_HELD(BUTTON_RIGHT)) {
+            player.aniState = PLAYERRIGHT;
+        } if (BUTTON_HELD(BUTTON_DOWN)) {
+            player.aniState = PLAYERDOWN;
+            // Turn cheat variable on if you are holding down
+            player.cheatOn = 1;
+        } else {
+            // Turn off the cheat once down is released
+            player.cheatOn = 0;
+        }
+
     }
 
     if (player.jumping) {
@@ -380,8 +400,9 @@ void updateStatue() {
     && (gemsRemaining == 0)
     && collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow, statue.width, statue.height)) {
 
-        statue.aniState = 20;
-        statue.attack = 1;
+        //statue.aniState = 2;
+        gameState = CUTSCENE2;
+        //statue.attack = 1;
 
     }
 
@@ -570,6 +591,58 @@ void updateHearts(HEART* h) {
 
         // Otherwise, hide it
         shadowOAM[h->OAMpos].attr0 = ATTR0_HIDE;
+
+    }
+
+}
+
+// Helper to update text bubble
+void updateText() {
+
+    // If we are in a cutscene
+    if ((gameState == CUTSCENE1) || (gameState == CUTSCENE2)) {
+
+        // Increment text bubble sprite when player presses a
+        if(BUTTON_PRESSED(BUTTON_A)) {
+
+            textBubble.spriteSheetrow++;
+
+        }
+
+        // If we're in cutscene 1 and we reach spritesheetrow 2, turn off text bubble
+        if ((textBubble.spriteSheetrow == 2) && (gameState == CUTSCENE1)) {
+
+            textBubble.active = 0;
+            gameState = PLAY;
+
+        }
+        // else if we're in cutscene 2 and we reach spritesheetrow 4, turn off text bubble
+        else if (textBubble.spriteSheetrow == 4 && gameState == CUTSCENE2) {
+
+            textBubble.active = 0;
+            gameState = PLAY;
+
+        }
+        // else we are in a cutscene still and the textbubble should be active
+        else {
+            
+            textBubble.active = 1;
+
+        }
+
+    }
+
+    // If the text bubble is active, draw it
+    if (textBubble.active) {
+
+        shadowOAM[textBubble.OAMpos].attr0 = (ROWMASK & textBubble.worldRow) | ATTR0_WIDE;
+        shadowOAM[textBubble.OAMpos].attr1 = (COLMASK & textBubble.worldCol) | ATTR1_LARGE;
+        shadowOAM[textBubble.OAMpos].attr2 = ATTR2_TILEID(21, textBubble.spriteSheetrow * 4) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+
+    } else {
+
+        // Otherwise, hide it
+        shadowOAM[textBubble.OAMpos].attr0 = ATTR0_HIDE;
 
     }
 

@@ -803,6 +803,7 @@ win:
 	.comm	buttons,2,2
 	.comm	soundB,32,4
 	.comm	soundA,32,4
+	.comm	textBubble,28,4
 	.comm	statue,52,4
 	.comm	hearts,72,4
 	.comm	gemNum,20,4
@@ -811,6 +812,7 @@ win:
 	.comm	gemCounterIcon,32,4
 	.comm	gems,128,4
 	.comm	player,72,4
+	.comm	gameState,4,4
 	.comm	statueLivesRemaining,4,4
 	.comm	livesRemaining,4,4
 	.comm	gemsRemaining,4,4
