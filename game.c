@@ -8,6 +8,8 @@
 #include "sound.h"
 #include "GemCollectSound.h"
 #include "HurtSound.h"
+#include "BossBattleSongLooping.h"
+#include "EnemyInjured.h"
 
 // Initialize the game
 void initGame() {
@@ -77,6 +79,9 @@ void initGame() {
     statue.OAMpos = 12;
     statue.aniState = 0;
     statue.attack = 0;
+    statue.palRow = 0;
+    statue.colliding = 0;
+    statue.rvel = 1;
 
     // Initialize the text bubble
     textBubble.width = 64;
@@ -206,7 +211,7 @@ void updatePlayer() {
     player.rvel = player.rvel_FP / FP_SCALING_FACTOR;
 
     // Moving left logic
-    if (BUTTON_HELD(BUTTON_LEFT) && !(player.cheatOn) && gameState == PLAY) {
+    if (BUTTON_HELD(BUTTON_LEFT) && !(player.cheatOn) && (gameState == PLAY || gameState == BOSSBATTLE)) {
         if ( (player.worldCol + 8 > 0)
         && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow, MAPWIDTH)])
         && (collisionMapBitmap[OFFSET(player.worldCol + 8 - player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
@@ -222,7 +227,7 @@ void updatePlayer() {
     }
 
     // Moving right logic
-    if (BUTTON_HELD(BUTTON_RIGHT) && !(player.cheatOn) && gameState == PLAY) {
+    if (BUTTON_HELD(BUTTON_RIGHT) && !(player.cheatOn) && (gameState == PLAY || gameState == BOSSBATTLE)) {
         if (player.worldCol + 8 < SCREENWIDTH
         && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow, MAPWIDTH)])
         && (collisionMapBitmap[OFFSET(player.worldCol + player.width - 9 + player.cvel, player.worldRow + player.height - 1, MAPWIDTH)])) {
@@ -287,7 +292,7 @@ void updatePlayer() {
 
             // If the player is standing on the ground, they can jump
             // which will increase their velocity instantly to the max
-            if (BUTTON_PRESSED(BUTTON_UP) && gameState == PLAY) {
+            if (BUTTON_PRESSED(BUTTON_UP) && (gameState == PLAY || gameState == BOSSBATTLE)) {
 
                 // Stop player from jumping if at top of screen
                 if (player.worldRow > 0) {
@@ -344,7 +349,7 @@ void animatePlayer() {
         player.curFrame = (player.curFrame + 1) % player.numFrames;
     }   
     
-    if (gameState == PLAY) {
+    if (gameState == PLAY || gameState == BOSSBATTLE) {
 
         if (BUTTON_HELD(BUTTON_LEFT)) {
             player.aniState = PLAYERLEFT;
@@ -395,14 +400,97 @@ void updateStatue() {
     // If the player has collected all of the gems AND drops them off at the statue
     // AND the statue is on screen
     // turn statue to evil mode >:(
-    if ( (statue.screenRow <= 160)
+    if ( (statue.screenRow <= 100)
     && (statue.screenRow + statue.height >= 0)
     && (gemsRemaining == 0)
-    && collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow, statue.width, statue.height)) {
+    && (gameState != BOSSBATTLE)
+    && (gameState != CUTSCENE3)
+    && (gameState != END)) {
 
-        //statue.aniState = 2;
+        statue.aniState = 3;
         gameState = CUTSCENE2;
-        //statue.attack = 1;
+        statue.palRow = 3;
+
+    }
+
+
+    // If in bossbattle state, do movement/collision logic
+    if (gameState == BOSSBATTLE) {
+        
+        if (statue.direction == 1) {
+
+            // If the statue is moving to the right,
+            // If it will extend past the map limit or hit a wall, flip the direction
+            if ((statue.worldCol + statue.width > MAPWIDTH)
+            || !(collisionMapBitmap[OFFSET(statue.worldCol + statue.width - 1 + statue.cvel, statue.worldRow + statue.height/2, MAPWIDTH)])
+            || !(collisionMapBitmap[OFFSET(statue.worldCol + statue.width - 1 + statue.cvel, statue.worldRow + statue.height - 1, MAPWIDTH)])) {
+                statue.direction = 0;
+            } else {
+                // Else, keep moving right
+                statue.worldCol += statue.rvel;
+            }  
+
+        } 
+
+        if (statue.direction == 0) {
+
+            // If the statue is moving to the left,
+            // If it will extend past the map limit or hit a wall, flip the direction
+            if ((statue.worldCol < 0)
+            || !(collisionMapBitmap[OFFSET(statue.worldCol - statue.cvel, statue.worldRow + statue.height/2, MAPWIDTH)])
+            || !(collisionMapBitmap[OFFSET(statue.worldCol - statue.cvel, statue.worldRow + statue.height - 1, MAPWIDTH)])) {
+                statue.direction = 1;
+            } else {
+                // Else, keep moving left
+                statue.worldCol -= statue.rvel;
+            }
+
+        }
+
+        // Check for a collision with the player
+        if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow + statue.height, statue.width, statue.height)) {
+
+            if (!(statue.colliding) && !(player.cheatOn)) {
+
+                if (statue.screenRow > player.screenRow - 3) {
+
+                    statue.aniState--;
+                    statue.rvel++;
+                    playSoundB(EnemyInjured, ENEMYINJUREDLEN, ENEMYINJUREDFREQ, 0);
+
+                } else {
+
+                    // Turn off the leftmost heart icon
+                    if ((LIFECOUNT-livesRemaining >= 0) && (LIFECOUNT - livesRemaining < 3)) {
+                        hearts[LIFECOUNT - livesRemaining].active = 0;
+                    }
+
+                    // Decrement lives remaining counter if there is a collision
+                    livesRemaining--;
+
+                    // Play the hurt sound
+                    playSoundB(HurtSound, HURTSOUNDLEN, HURTSOUNDFREQ, 0);
+
+                }
+        
+            // Using this switch variable to prevent collision from instantly
+            // decrementing all lives
+            statue.colliding = 1;
+
+
+            }
+
+        } else {
+
+            statue.colliding = 0;
+
+        }
+
+        // If statue has returned to 0 anistate, the game is over!
+        if (statue.aniState == 0) {
+            statue.active = 0;
+            gameState = END;
+        }
 
     }
 
@@ -619,8 +707,11 @@ void updateText() {
         // else if we're in cutscene 2 and we reach spritesheetrow 4, turn off text bubble
         else if (textBubble.spriteSheetrow == 4 && gameState == CUTSCENE2) {
 
+            stopSound();
+            playSoundA(BossBattleSongLooping, BOSSBATTLESONGLOOPINGLEN, BOSSBATTLESONGLOOPINGFREQ, 1);
+
             textBubble.active = 0;
-            gameState = PLAY;
+            gameState = BOSSBATTLE;
 
         }
         // else we are in a cutscene still and the textbubble should be active
@@ -707,7 +798,7 @@ void drawGemNum() {
 void drawStatue() {
 
     // If the statue is off screen, hide it
-    if (statue.screenRow > 160 || statue.screenRow + statue.height < 0) {
+    if (statue.screenRow > 160 || statue.screenRow + statue.height < 0 || !(statue.active)) {
 
         shadowOAM[statue.OAMpos].attr0 = ATTR0_HIDE;
 
@@ -716,7 +807,7 @@ void drawStatue() {
         // Otherwise, draw it
         shadowOAM[statue.OAMpos].attr0 = (ROWMASK & statue.screenRow) | ATTR0_SQUARE;
         shadowOAM[statue.OAMpos].attr1 = (COLMASK & statue.screenCol) | ATTR1_MEDIUM;
-        shadowOAM[statue.OAMpos].attr2 = ATTR2_TILEID(17, statue.aniState) | ATTR2_PALROW(0) | ATTR2_PRIORITY(0);
+        shadowOAM[statue.OAMpos].attr2 = ATTR2_TILEID(17, statue.aniState * 4) | ATTR2_PALROW(statue.palRow) | ATTR2_PRIORITY(0);
 
     }
 

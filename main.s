@@ -84,7 +84,7 @@ initialize:
 	mov	r2, #34304
 	ldr	r4, .L8+8
 	strh	r2, [r5, #10]	@ movhi
-	mov	r3, #2144
+	mov	r3, #2048
 	mov	r2, #100663296
 	mov	r0, #3
 	ldr	r1, .L8+12
@@ -287,7 +287,7 @@ start:
 	.word	stopSound
 	.word	playSoundA
 	.word	11025
-	.word	529920
+	.word	1114106
 	.word	GameSongLooping
 	.word	initGame
 	.size	start, .-start
@@ -348,7 +348,7 @@ instructions:
 	.word	stopSound
 	.word	playSoundA
 	.word	11025
-	.word	529920
+	.word	1114106
 	.word	GameSongLooping
 	.word	initGame
 	.size	instructions, .-instructions
@@ -578,32 +578,15 @@ game:
 	beq	.L81
 .L74:
 	ldr	r3, .L84+16
-	ldr	r3, [r3, #44]
-	cmp	r3, #0
-	bne	.L82
+	ldr	r3, [r3]
+	cmp	r3, #6
+	beq	.L82
 	ldr	r3, .L84+20
 	ldr	r3, [r3]
 	cmp	r3, #0
 	beq	.L83
 	pop	{r4, lr}
 	bx	lr
-.L82:
-	ldr	r3, .L84+24
-	mov	lr, pc
-	bx	r3
-	ldr	r4, .L84+28
-	mov	r3, #1
-	ldr	r2, .L84+32
-	ldr	r1, .L84+36
-	ldr	r0, .L84+40
-	mov	lr, pc
-	bx	r4
-	mov	r2, #67108864
-	ldrh	r3, [r2]
-	bic	r3, r3, #512
-	strh	r3, [r2]	@ movhi
-	pop	{r4, lr}
-	b	goToWin
 .L83:
 	ldr	r3, .L84+24
 	mov	lr, pc
@@ -631,6 +614,23 @@ game:
 	strh	r3, [r2]	@ movhi
 	pop	{r4, lr}
 	b	goToPause
+.L82:
+	ldr	r3, .L84+24
+	mov	lr, pc
+	bx	r3
+	ldr	r4, .L84+28
+	mov	r3, #1
+	ldr	r2, .L84+32
+	ldr	r1, .L84+36
+	ldr	r0, .L84+40
+	mov	lr, pc
+	bx	r4
+	mov	r2, #67108864
+	ldrh	r3, [r2]
+	bic	r3, r3, #512
+	strh	r3, [r2]	@ movhi
+	pop	{r4, lr}
+	b	goToWin
 .L85:
 	.align	2
 .L84:
@@ -638,12 +638,12 @@ game:
 	.word	drawGame
 	.word	oldButtons
 	.word	buttons
-	.word	statue
+	.word	gameState
 	.word	livesRemaining
 	.word	stopSound
 	.word	playSoundA
 	.word	11025
-	.word	387175
+	.word	977472
 	.word	StartSoundLooping
 	.word	pauseSound
 	.size	game, .-game
@@ -749,7 +749,7 @@ main:
 	.word	buttons
 	.word	playSoundA
 	.word	11025
-	.word	387175
+	.word	977472
 	.word	StartSoundLooping
 	.word	oldButtons
 	.word	start
@@ -804,7 +804,7 @@ win:
 	.comm	soundB,32,4
 	.comm	soundA,32,4
 	.comm	textBubble,28,4
-	.comm	statue,52,4
+	.comm	statue,60,4
 	.comm	hearts,72,4
 	.comm	gemNum,20,4
 	.comm	wolves,136,4

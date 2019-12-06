@@ -118,11 +118,11 @@ void stopSound();
 
 # 1 "GameSongLooping.h" 1
 # 20 "GameSongLooping.h"
-extern const unsigned char GameSongLooping[529920];
+extern const unsigned char GameSongLooping[1114106];
 # 6 "sound.c" 2
 # 1 "StartSoundLooping.h" 1
 # 20 "StartSoundLooping.h"
-extern const unsigned char StartSoundLooping[387175];
+extern const unsigned char StartSoundLooping[977472];
 # 7 "sound.c" 2
 
 void setupSounds()

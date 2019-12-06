@@ -206,6 +206,8 @@ typedef struct {
     int aniState;
     int attack;
     int colliding;
+    int palRow;
+    int direction;
 
 } STATUE;
 
@@ -220,7 +222,7 @@ typedef struct {
     int spriteSheetrow;
 
 } TEXTBUBBLE;
-# 136 "game.h"
+# 138 "game.h"
 int hOff;
 int vOff;
 
@@ -248,7 +250,7 @@ enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 enum{WOLFLEFT, WOLFRIGHT};
 
 
-enum{PLAY, CUTSCENE1, CUTSCENE2};
+enum{PLAY, CUTSCENE1, CUTSCENE2, BOSSBATTLE, MUSICTRANSITION1, CUTSCENE3, END};
 
 
 
@@ -324,7 +326,7 @@ extern const unsigned short winBGPal[256];
 # 38 "main.c" 2
 # 1 "platformsBG.h" 1
 # 22 "platformsBG.h"
-extern const unsigned short platformsBGTiles[2144];
+extern const unsigned short platformsBGTiles[2048];
 
 
 extern const unsigned short platformsBGMap[2048];
@@ -359,11 +361,11 @@ void stopSound();
 # 41 "main.c" 2
 # 1 "GameSongLooping.h" 1
 # 20 "GameSongLooping.h"
-extern const unsigned char GameSongLooping[529920];
+extern const unsigned char GameSongLooping[1114106];
 # 42 "main.c" 2
 # 1 "StartSoundLooping.h" 1
 # 20 "StartSoundLooping.h"
-extern const unsigned char StartSoundLooping[387175];
+extern const unsigned char StartSoundLooping[977472];
 # 43 "main.c" 2
 
 
@@ -402,7 +404,7 @@ int main() {
     initialize();
 
 
-    playSoundA(StartSoundLooping, 387175, 11025, 1);
+    playSoundA(StartSoundLooping, 977472, 11025, 1);
 
     while(1) {
 
@@ -449,7 +451,7 @@ void initialize() {
 
 
     (*(volatile unsigned short*)0x400000A) = ((0)<<2) | ((6)<<8) | (2<<14);
-    DMANow(3, platformsBGTiles, &((charblock *)0x6000000)[0], 4288 / 2);
+    DMANow(3, platformsBGTiles, &((charblock *)0x6000000)[0], 4096 / 2);
     DMANow(3, platformsBGMap, &((screenblock *)0x6000000)[6], 4096 / 2);
 
 
@@ -494,7 +496,7 @@ void start() {
 
 
         stopSound();
-        playSoundA(GameSongLooping, 529920, 11025, 1);
+        playSoundA(GameSongLooping, 1114106, 11025, 1);
 
 
         initGame();
@@ -534,7 +536,7 @@ void instructions() {
 
 
         stopSound();
-        playSoundA(GameSongLooping, 529920, 11025, 1);
+        playSoundA(GameSongLooping, 1114106, 11025, 1);
 
 
         initGame();
@@ -573,11 +575,11 @@ void game() {
         (*(unsigned short *)0x4000000) &= ~((1<<9));
         goToPause();
 
-    } else if (statue.attack) {
+    } else if (gameState == END) {
 
 
         stopSound();
-        playSoundA(StartSoundLooping, 387175, 11025, 1);
+        playSoundA(StartSoundLooping, 977472, 11025, 1);
 
 
         (*(unsigned short *)0x4000000) &= ~((1<<9));
@@ -587,7 +589,7 @@ void game() {
 
 
         stopSound();
-        playSoundA(StartSoundLooping, 387175, 11025, 1);
+        playSoundA(StartSoundLooping, 977472, 11025, 1);
 
 
 

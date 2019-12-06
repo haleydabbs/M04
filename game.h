@@ -103,6 +103,8 @@ typedef struct {
     int aniState;
     int attack;
     int colliding;
+    int palRow;
+    int direction;
 
 } STATUE;
 
@@ -160,7 +162,7 @@ enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 enum{WOLFLEFT, WOLFRIGHT};
 
 // Game state enum
-enum{PLAY, CUTSCENE1, CUTSCENE2};
+enum{PLAY, CUTSCENE1, CUTSCENE2, BOSSBATTLE, MUSICTRANSITION1, CUTSCENE3, END};
 
 // Functions
 

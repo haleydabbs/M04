@@ -1688,6 +1688,8 @@ typedef struct {
     int aniState;
     int attack;
     int colliding;
+    int palRow;
+    int direction;
 
 } STATUE;
 
@@ -1702,7 +1704,7 @@ typedef struct {
     int spriteSheetrow;
 
 } TEXTBUBBLE;
-# 136 "game.h"
+# 138 "game.h"
 int hOff;
 int vOff;
 
@@ -1730,7 +1732,7 @@ enum{PLAYERRIGHT, PLAYERLEFT, PLAYERIDLE, PLAYERDOWN};
 enum{WOLFLEFT, WOLFRIGHT};
 
 
-enum{PLAY, CUTSCENE1, CUTSCENE2};
+enum{PLAY, CUTSCENE1, CUTSCENE2, BOSSBATTLE, MUSICTRANSITION1, CUTSCENE3, END};
 
 
 
@@ -1781,6 +1783,14 @@ extern const unsigned char GemCollectSound[4008];
 # 20 "HurtSound.h"
 extern const unsigned char HurtSound[1402];
 # 11 "game.c" 2
+# 1 "BossBattleSongLooping.h" 1
+# 20 "BossBattleSongLooping.h"
+extern const unsigned char BossBattleSongLooping[725763];
+# 12 "game.c" 2
+# 1 "EnemyInjured.h" 1
+# 20 "EnemyInjured.h"
+extern const unsigned char EnemyInjured[21004];
+# 13 "game.c" 2
 
 
 void initGame() {
@@ -1850,6 +1860,9 @@ void initGame() {
     statue.OAMpos = 12;
     statue.aniState = 0;
     statue.attack = 0;
+    statue.palRow = 0;
+    statue.colliding = 0;
+    statue.rvel = 1;
 
 
     textBubble.width = 64;
@@ -1979,7 +1992,7 @@ void updatePlayer() {
     player.rvel = player.rvel_FP / 1024;
 
 
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5))) && !(player.cheatOn) && gameState == PLAY) {
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5))) && !(player.cheatOn) && (gameState == PLAY || gameState == BOSSBATTLE)) {
         if ( (player.worldCol + 8 > 0)
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + 8 - player.cvel))])
         && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + 8 - player.cvel))])) {
@@ -1995,7 +2008,7 @@ void updatePlayer() {
     }
 
 
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4))) && !(player.cheatOn) && gameState == PLAY) {
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4))) && !(player.cheatOn) && (gameState == PLAY || gameState == BOSSBATTLE)) {
         if (player.worldCol + 8 < 240
         && (collisionMapBitmap[((player.worldRow)*(256)+(player.worldCol + player.width - 9 + player.cvel))])
         && (collisionMapBitmap[((player.worldRow + player.height - 1)*(256)+(player.worldCol + player.width - 9 + player.cvel))])) {
@@ -2060,7 +2073,7 @@ void updatePlayer() {
 
 
 
-            if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6)))) && gameState == PLAY) {
+            if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6)))) && (gameState == PLAY || gameState == BOSSBATTLE)) {
 
 
                 if (player.worldRow > 0) {
@@ -2117,7 +2130,7 @@ void animatePlayer() {
         player.curFrame = (player.curFrame + 1) % player.numFrames;
     }
 
-    if (gameState == PLAY) {
+    if (gameState == PLAY || gameState == BOSSBATTLE) {
 
         if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
             player.aniState = PLAYERLEFT;
@@ -2168,14 +2181,97 @@ void updateStatue() {
 
 
 
-    if ( (statue.screenRow <= 160)
+    if ( (statue.screenRow <= 100)
     && (statue.screenRow + statue.height >= 0)
     && (gemsRemaining == 0)
-    && collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow, statue.width, statue.height)) {
+    && (gameState != BOSSBATTLE)
+    && (gameState != CUTSCENE3)
+    && (gameState != END)) {
 
-
+        statue.aniState = 3;
         gameState = CUTSCENE2;
+        statue.palRow = 3;
 
+    }
+
+
+
+    if (gameState == BOSSBATTLE) {
+
+        if (statue.direction == 1) {
+
+
+
+            if ((statue.worldCol + statue.width > 256)
+            || !(collisionMapBitmap[((statue.worldRow + statue.height/2)*(256)+(statue.worldCol + statue.width - 1 + statue.cvel))])
+            || !(collisionMapBitmap[((statue.worldRow + statue.height - 1)*(256)+(statue.worldCol + statue.width - 1 + statue.cvel))])) {
+                statue.direction = 0;
+            } else {
+
+                statue.worldCol += statue.rvel;
+            }
+
+        }
+
+        if (statue.direction == 0) {
+
+
+
+            if ((statue.worldCol < 0)
+            || !(collisionMapBitmap[((statue.worldRow + statue.height/2)*(256)+(statue.worldCol - statue.cvel))])
+            || !(collisionMapBitmap[((statue.worldRow + statue.height - 1)*(256)+(statue.worldCol - statue.cvel))])) {
+                statue.direction = 1;
+            } else {
+
+                statue.worldCol -= statue.rvel;
+            }
+
+        }
+
+
+        if (collision(player.screenCol + 8, player.screenRow, player.width/2, player.height, statue.screenCol, statue.screenRow + statue.height, statue.width, statue.height)) {
+
+            if (!(statue.colliding) && !(player.cheatOn)) {
+
+                if (statue.screenRow > player.screenRow - 3) {
+
+                    statue.aniState--;
+                    statue.rvel++;
+                    playSoundB(EnemyInjured, 21004, 11025, 0);
+
+                } else {
+
+
+                    if ((3 -livesRemaining >= 0) && (3 - livesRemaining < 3)) {
+                        hearts[3 - livesRemaining].active = 0;
+                    }
+
+
+                    livesRemaining--;
+
+
+                    playSoundB(HurtSound, 1402, 11025, 0);
+
+                }
+
+
+
+            statue.colliding = 1;
+
+
+            }
+
+        } else {
+
+            statue.colliding = 0;
+
+        }
+
+
+        if (statue.aniState == 0) {
+            statue.active = 0;
+            gameState = END;
+        }
 
     }
 
@@ -2392,8 +2488,11 @@ void updateText() {
 
         else if (textBubble.spriteSheetrow == 4 && gameState == CUTSCENE2) {
 
+            stopSound();
+            playSoundA(BossBattleSongLooping, 725763, 11025, 1);
+
             textBubble.active = 0;
-            gameState = PLAY;
+            gameState = BOSSBATTLE;
 
         }
 
@@ -2480,7 +2579,7 @@ void drawGemNum() {
 void drawStatue() {
 
 
-    if (statue.screenRow > 160 || statue.screenRow + statue.height < 0) {
+    if (statue.screenRow > 160 || statue.screenRow + statue.height < 0 || !(statue.active)) {
 
         shadowOAM[statue.OAMpos].attr0 = (2<<8);
 
@@ -2489,7 +2588,7 @@ void drawStatue() {
 
         shadowOAM[statue.OAMpos].attr0 = (0xFF & statue.screenRow) | (0<<14);
         shadowOAM[statue.OAMpos].attr1 = (0x1FF & statue.screenCol) | (2<<14);
-        shadowOAM[statue.OAMpos].attr2 = ((statue.aniState)*32+(17)) | ((0)<<12) | ((0)<<10);
+        shadowOAM[statue.OAMpos].attr2 = ((statue.aniState * 4)*32+(17)) | ((statue.palRow)<<12) | ((0)<<10);
 
     }
 

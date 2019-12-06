@@ -248,7 +248,7 @@ void game() {
         REG_DISPCTL &= ~(BG1_ENABLE);
         goToPause();
 
-    } else if (statue.attack) {
+    } else if (gameState == END) {
 
         // Set up music for win screen (currently same as start)
         stopSound();
